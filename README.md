@@ -1,5 +1,5 @@
 # PHP-SDKv2
-Powerful PHP framework, written in PHP 8.1, modernisation of rather primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
+Powerful PHP framework, written in PHP 8.1, modernised version of rather primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
 # THIS DOCUMENTATION IS WORK IN PROGRESS
 
