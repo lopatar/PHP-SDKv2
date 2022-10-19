@@ -14,11 +14,6 @@ final class Response
 	private ?View $view = null;
 	private string $text = '';
 
-	/**
-	 * @var Cookie[] $cookies
-	 */
-	private array $cookies = [];
-
 	public function getStatusCode(): StatusCode
 	{
 		return $this->statusCode;
