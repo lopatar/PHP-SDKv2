@@ -8,6 +8,7 @@ Powerful PHP framework, written in PHP 8.1, modernised version of rather primiti
 - Session categories
 - More CSRF methods (header, cookie)
 - Examples of features
+- cURL wrapper
 
 # Requirements
 - PHP 8.1
