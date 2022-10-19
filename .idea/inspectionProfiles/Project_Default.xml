@@ -1,0 +1,11 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PhpStanGlobal" enabled="false" level="WEAK WARNING" enabled_by_default="false">
+      <scope name="Project Files" level="WEAK WARNING" enabled="false">
+        <option name="FULL_PROJECT" value="true" />
+        <option name="level" value="8" />
+      </scope>
+    </inspection_tool>
+  </profile>
+</component>

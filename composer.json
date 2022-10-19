@@ -1,0 +1,23 @@
+{
+  "name": "lopatar/php-sdkv2",
+  "autoload": {
+    "psr-4": {
+      "Sdk\\": "Sdk/",
+      "App\\": "App/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Jiří Lopatář",
+      "email": "jiri@lopatar.me"
+    }
+  ],
+  "description": "Second generation of my experimental PHP SDK!",
+  "require-dev": {
+    "phpstan/phpstan": "^1.8"
+  },
+  "require": {
+    "ext-mysqli": "*",
+    "ext-openssl": "*"
+  }
+}

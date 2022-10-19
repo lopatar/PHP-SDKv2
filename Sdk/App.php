@@ -1,0 +1,141 @@
+<?php
+declare(strict_types=1);
+
+namespace Sdk;
+
+use App\Config;
+use Sdk\Database\MariaDB\Connection;
+use Sdk\Http\Entities\RequestMethod;
+use Sdk\Http\Entities\StatusCode;
+use Sdk\Http\Request;
+use Sdk\Http\Response;
+use Sdk\Middleware\Interfaces\IMiddleware;
+use Sdk\Routing\Entities\Route;
+use Sdk\Routing\Router;
+
+final class App
+{
+	private readonly Request $request;
+	private Response $response;
+
+	private readonly Router $router;
+
+	/**
+	 * @var IMiddleware[] $middleware
+	 */
+	private array $middleware = [];
+
+	public function __construct(private readonly Config $config)
+	{
+		$this->request = new Request();
+		$this->response = new Response();
+		$this->router = new Router();
+
+		$this->initDatabaseConnection();
+		$this->spoofServerHeader();
+	}
+
+	private function initDatabaseConnection(): void
+	{
+		if ($this->config::USE_MARIADB) {
+			Connection::init($this->config::MARIADB_HOST, $this->config::MARIADB_USERNAME, $this->config::MARIADB_PASSWORD, $this->config::MARIADB_DB_NAME);
+		}
+	}
+
+	private function spoofServerHeader(): void
+	{
+		if ($this->config::SPOOF_SERVER_HEADER) {
+			$this->response->addHeader('Server', $this->config::SERVER_HEADER_VALUE);
+		}
+	}
+
+	/**
+	 * Method that executes the application, matches routes, runs middleware and invokes the route methods
+	 */
+	public function run(): never
+	{
+		$this->runMiddleware();
+		$matchedRoute = $this->router->matchRoute($this->request);
+
+		if ($matchedRoute !== null) {
+			$this->response = $matchedRoute->execute($this->request, $this->response);
+		} else {
+			$this->response->setStatusCode(StatusCode::NOT_FOUND);
+		}
+
+		Connection::getMysqlConnection()?->close();
+
+		$this->response->send();
+	}
+
+	private function runMiddleware(): void
+	{
+		foreach ($this->middleware as $middleware) {
+			$this->response = $middleware->execute($this->request, $this->response, []);
+
+			if ($this->response->getStatusCode() !== StatusCode::OK) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
+				$this->response->send();
+			}
+		}
+	}
+
+	public function addMiddleware(IMiddleware $middleware): self
+	{
+		$this->middleware[] = $middleware;
+		return $this;
+	}
+
+	/**
+	 * @param IMiddleware[] $middleware
+	 */
+	public function addMiddlewareBulk(array $middleware): self
+	{
+		$this->middleware = array_merge($this->middleware, $middleware);
+		return $this;
+	}
+
+	public function get(string $requestPathFormat, callable|string $callback): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::GET);
+	}
+
+	/**
+	 * @param RequestMethod|RequestMethod[] $requestMethod
+	 */
+	public function route(string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod): Route
+	{
+		$route = new Route($requestPathFormat, $callback, $requestMethod);
+		$this->router->addRoute($route);
+		return $route;
+	}
+	
+	public function post(string $requestPathFormat, callable|string $callback): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::POST);
+	}
+
+	public function put(string $requestPathFormat, callable|string $callback): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::PUT);
+	}
+
+	public function delete(string $requestPathFormat, callable|string $callback): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::DELETE);
+	}
+
+	public function options(string $requestPathFormat, callable|string $callback): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::OPTIONS);
+	}
+
+	public function patch(string $requestPathFormat, callable|string $callback): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::PATCH);
+	}
+
+	public function any(string $requestPathFormat, callable|string $callback): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::cases());
+	}
+}
