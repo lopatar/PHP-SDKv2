@@ -12,6 +12,8 @@ abstract class AES
     public static function encryptString(string $text, string $keyPhrase): string
     {
         $salt = Random::bytesSafe(8);
+		$key = $iv = '';
+
         self::deriveKeyAndIV($salt, $keyPhrase, $key, $iv);
         return base64_encode('Salted__' . $salt . openssl_encrypt($text, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv));
     }
@@ -27,6 +29,7 @@ abstract class AES
         $salt = substr($text, 8, 8);
         $text = substr($text, 16);
 
+		$key = $iv = '';
         self::deriveKeyAndIV($salt, $keyPhrase, $key,$iv);
 
         return openssl_decrypt($text, 'aes-256-cbc', $key, true, $iv);

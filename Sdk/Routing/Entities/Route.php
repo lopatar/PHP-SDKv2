@@ -155,8 +155,9 @@ final class Route
 			}
 
 			return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
-		} catch (\TypeError) {
+		} catch (\TypeError $e) {
 			$response->setStatusCode(StatusCode::NOT_IMPLEMENTED);
+			$response->writeLine($e->getMessage());
 			return $response;
 		}
 	}

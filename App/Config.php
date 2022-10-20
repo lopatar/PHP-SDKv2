@@ -52,7 +52,7 @@ final class Config
 	 * Server header spoofing
 	 * @see App::spoofServerHeader()
 	 */
-	const SPOOF_SERVER_HEADER = true;
+	const SPOOF_SERVER_HEADER = false;
 	const SERVER_HEADER_VALUE = 'openresty';
 
     /**

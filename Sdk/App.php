@@ -13,6 +13,7 @@ use Sdk\Http\Response;
 use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
+use Sdk\Middleware\Session;
 use Sdk\Routing\Entities\Route;
 use Sdk\Routing\Router;
 use Sdk\Utils\Random;
@@ -29,9 +30,6 @@ final class App
 	 */
 	private array $middleware = [];
 
-    /**
-     * @throws SessionNotStarted
-     */
     public function __construct(private readonly Config $config)
 	{
 		$this->request = new Request($this->config);
@@ -40,7 +38,6 @@ final class App
 
 		$this->initDatabaseConnection();
 		$this->spoofServerHeader();
-        $this->initCookieEncryption();
 	}
 
 	private function initDatabaseConnection(): void
@@ -59,6 +56,7 @@ final class App
 
 	/**
 	 * Method that executes the application, matches routes, runs middleware and invokes the route methods
+	 * @throws SessionNotStarted
 	 */
 	public function run(): never
 	{
@@ -76,6 +74,9 @@ final class App
 		$this->response->send();
 	}
 
+	/**
+	 * @throws SessionNotStarted
+	 */
 	private function runMiddleware(): void
 	{
 		foreach ($this->middleware as $middleware) {
@@ -83,6 +84,10 @@ final class App
 
 			if ($this->response->getStatusCode() !== StatusCode::OK) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
 				$this->response->send();
+			}
+
+			if ($middleware instanceof Session) {
+				$this->initCookieEncryption();
 			}
 		}
 	}
@@ -156,11 +161,13 @@ final class App
         Cookie::setConfig($this->config);
 
         if ($this->config::COOKIE_ENCRYPTION) {
-            if (!Middleware\Session::isStarted()) {
+            if (!Session::isStarted()) {
                 throw new SessionNotStarted('\\Sdk\\App');
             }
 
-            Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
+			if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
+				Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
+			}
         }
     }
 }

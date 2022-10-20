@@ -17,6 +17,7 @@ final class Cookie
 	public function __construct(public readonly string $name, public readonly string $value) {}
 
     /**
+     * Static constructor to get the {@see Cookie} object from an encrypted value
      * @throws CookieDecryptFailed
      */
     public static function fromEncrypted(string $name, string $encryptedValue): self
@@ -48,6 +49,7 @@ final class Cookie
 	}
 
 	/**
+	 * This function actually sends the cookie to the browser, no need to call this method when using {@see Cookie::set()}
 	 * @param Request $request
 	 * @param int $expires Number of seconds the cookie should live for
 	 * @param string $path

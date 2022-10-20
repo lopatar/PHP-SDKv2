@@ -13,7 +13,6 @@ class Home
 {
 	public static function main(Request $request, Response $response, array $args): Response
 	{
-		$response->createView('Home.php');
 		return $response;
 	}
 }

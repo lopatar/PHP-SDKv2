@@ -7,6 +7,7 @@ use App\Config;
 use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\Url;
+use Sdk\Http\Exceptions\CookieDecryptFailed;
 
 /**
  * BROKE VERSIONING COMMIT
@@ -102,6 +103,7 @@ final class Request
 
 	/**
 	 * @return Cookie|null Null on failure
+	 * @throws CookieDecryptFailed
 	 */
 	public function getCookie(string $name): ?Cookie
 	{
@@ -110,7 +112,8 @@ final class Request
         }
 
         $cookieValue = $_COOKIE[$name];
-        return ($this->config::COOKIE_ENCRYPTION) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
+		//only decrypt cookies if encryption is enabled & name differs from session cookie name
+        return ($this->config::COOKIE_ENCRYPTION && $this->config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
 	}
 
 	public function hasCookie(string $name): bool
@@ -120,6 +123,7 @@ final class Request
 
 	/**
 	 * @return Cookie[]
+	 * @throws CookieDecryptFailed
 	 */
 	public function getCookies(): array
 	{
@@ -129,7 +133,8 @@ final class Request
 		$cookies = [];
 
 		foreach ($_COOKIE as $name => $value) {
-			$cookies[] = new Cookie($name, $value);
+			//only decrypt cookies if encryption is enabled & name differs from session cookie name
+			$cookies[] = ($this->config::COOKIE_ENCRYPTION && $this->config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $value) : new Cookie($name, $value);
 		}
 
 		return $cookies;
