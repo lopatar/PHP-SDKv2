@@ -30,7 +30,7 @@ final class App
 	 */
 	private array $middleware = [];
 
-    public function __construct(private readonly Config $config)
+	public function __construct(private readonly Config $config)
 	{
 		$this->request = new Request($this->config);
 		$this->response = new Response();
@@ -92,6 +92,25 @@ final class App
 		}
 	}
 
+	/**
+	 * Initializes the
+	 * @throws SessionNotStarted
+	 */
+	private function initCookieEncryption(): void
+	{
+		Cookie::setConfig($this->config);
+
+		if ($this->config::COOKIE_ENCRYPTION) {
+			if (!Session::isStarted()) {
+				throw new SessionNotStarted('\\Sdk\\App');
+			}
+
+			if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
+				Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
+			}
+		}
+	}
+
 	public function addMiddleware(IMiddleware $middleware): self
 	{
 		$this->middleware[] = $middleware;
@@ -121,7 +140,7 @@ final class App
 		$this->router->addRoute($route);
 		return $route;
 	}
-	
+
 	public function post(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::POST);
@@ -151,23 +170,4 @@ final class App
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::cases());
 	}
-
-    /**
-     * Initializes the
-     * @throws SessionNotStarted
-     */
-    private function initCookieEncryption(): void
-    {
-        Cookie::setConfig($this->config);
-
-        if ($this->config::COOKIE_ENCRYPTION) {
-            if (!Session::isStarted()) {
-                throw new SessionNotStarted('\\Sdk\\App');
-            }
-
-			if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
-				Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
-			}
-        }
-    }
 }

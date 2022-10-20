@@ -55,9 +55,9 @@ final class Config
 	const SPOOF_SERVER_HEADER = false;
 	const SERVER_HEADER_VALUE = 'openresty';
 
-    /**
-     * Cookie encryption
-     * @uses \Sdk\Utils\Encryption\AES, \Sdk\Middleware\Session
-     */
-    const COOKIE_ENCRYPTION = false;
+	/**
+	 * Cookie encryption
+	 * @uses \Sdk\Utils\Encryption\AES, \Sdk\Middleware\Session
+	 */
+	const COOKIE_ENCRYPTION = false;
 }

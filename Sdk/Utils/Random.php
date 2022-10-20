@@ -22,15 +22,15 @@ abstract class Random
 		return bin2hex(self::bytesSafe($length / 2));
 	}
 
-    /**
-     * Function that generates a cryptographically secure bytes
-     * @param int $length
-     * @return string
-     */
-    public static function bytesSafe(int $length): string
-    {
-        return openssl_random_pseudo_bytes($length);
-    }
+	/**
+	 * Function that generates a cryptographically secure bytes
+	 * @param int $length
+	 * @return string
+	 */
+	public static function bytesSafe(int $length): string
+	{
+		return openssl_random_pseudo_bytes($length);
+	}
 
 	/**
 	 * Function that generates cryptographically secure random floats

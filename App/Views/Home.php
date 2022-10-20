@@ -6,7 +6,7 @@
 </head>
 <body>
 <form method="POST" action="/test">
-    <?= $this->getProperty('csrfField') ?>
+	<?= $this->getProperty('csrfField') ?>
     <input type="text" name="test" required>
     <button type="submit">Submit</button>
 </form>

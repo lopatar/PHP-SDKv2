@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Sdk\Http;
 
-use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Render\Exceptions\ViewFileNotFound;
 use Sdk\Render\View;

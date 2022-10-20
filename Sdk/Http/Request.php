@@ -108,12 +108,12 @@ final class Request
 	public function getCookie(string $name): ?Cookie
 	{
 		if (!$this->hasCookie($name)) {
-            return null;
-        }
+			return null;
+		}
 
-        $cookieValue = $_COOKIE[$name];
+		$cookieValue = $_COOKIE[$name];
 		//only decrypt cookies if encryption is enabled & name differs from session cookie name
-        return ($this->config::COOKIE_ENCRYPTION && $this->config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
+		return ($this->config::COOKIE_ENCRYPTION && $this->config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
 	}
 
 	public function hasCookie(string $name): bool

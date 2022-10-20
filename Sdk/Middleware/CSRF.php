@@ -18,8 +18,25 @@ final class CSRF implements IMiddleware
 {
 	private static ?Config $_config = null;
 
-	public function __construct(private readonly Config $config) {
+	public function __construct(private readonly Config $config)
+	{
 		self::$_config = $this->config; //hacky workaround
+	}
+
+	/**
+	 * This function should be used for outputting the HTML form input element for sending the CSRF token to server side
+	 * @throws SessionNotStarted
+	 * @uses Session::isStarted(), CSRF::getToken()
+	 */
+	public static function getInputField(): string
+	{
+		if (!Session::isStarted()) {
+			throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
+		}
+
+		$token = self::getToken();
+		$inputName = SessionVariable::CSRF_TOKEN->value;
+		return "<input type=\"hidden\" name=\"$inputName\" value=\"$token\" required>";
 	}
 
 	/**
@@ -49,22 +66,6 @@ final class CSRF implements IMiddleware
 	}
 
 	/**
-	 * This function should be used for outputting the HTML form input element for sending the CSRF token to server side
-	 * @throws SessionNotStarted
-	 * @uses Session::isStarted(), CSRF::getToken()
-	 */
-	public static function getInputField(): string
-	{
-		if (!Session::isStarted()) {
-            throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
-		}
-
-		$token = self::getToken();
-        $inputName = SessionVariable::CSRF_TOKEN->value;
-		return "<input type=\"hidden\" name=\"$inputName\" value=\"$token\" required>";
-	}
-
-	/**
 	 * @throws SessionNotStarted
 	 */
 	private function isValid(string|null $token): bool
@@ -78,7 +79,7 @@ final class CSRF implements IMiddleware
 	private static function getToken(): string
 	{
 		if (!Session::isStarted()) {
-            throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
+			throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
 		}
 
 		if (self::isExpired()) {
