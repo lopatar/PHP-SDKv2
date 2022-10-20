@@ -31,7 +31,7 @@ final class Request
 	 * @var string[]|string[][]
 	 * Associative array of all request headers, keys might be assigned to an array of values
 	 */
-	private array $headers;
+	public readonly array $headers;
 	private Url $url;
 
 	public function __construct(private readonly Config $config)
@@ -140,31 +140,6 @@ final class Request
 		return $cookies;
 	}
 
-	/**
-	 * Returns a new instance of the current instance with the header added, does not modify the current instance.
-	 */
-	public function withHeader(string $name, string $value): self
-	{
-		if (!$this->hasHeader($name)) {
-			$this->headers[$name] = $value;
-			$clone = clone $this;
-			unset($this->headers[$name]);
-			return $clone;
-		}
-
-		$backup = $this->headers[$name];
-
-		//header exists, therefore if it's already an array, we append. else we create an array with original values & append
-		if (is_array($backup)) {
-			$this->headers[$name][] = $value;
-		} else {
-			$this->headers[$name] = [$backup, $value];
-		}
-
-		$clone = clone $this;
-		$this->headers[$name] = $backup;
-		return $clone;
-	}
 
 	public function hasHeader(string $name): bool
 	{
