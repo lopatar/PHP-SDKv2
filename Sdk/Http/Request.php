@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace Sdk\Http;
 
+use App\Config;
 use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\Url;
 
 /**
+ * BROKE VERSIONING COMMIT
  * Class that gives user enough abstraction around the incoming HTTP request
  * @uses \Sdk\Http\Entities\RequestMethod
  * @uses \Sdk\Http\Entities\Cookie
@@ -31,7 +33,7 @@ final class Request
 	private array $headers;
 	private Url $url;
 
-	public function __construct()
+	public function __construct(private readonly Config $config)
 	{
 		$this->method = RequestMethod::from($this->getServer('REQUEST_METHOD'));
 		$this->protocol = $this->getServer('SERVER_PROTOCOL');
@@ -103,7 +105,12 @@ final class Request
 	 */
 	public function getCookie(string $name): ?Cookie
 	{
-		return $this->hasCookie($name) ? new Cookie($name, $_COOKIE[$name]) : null;
+		if (!$this->hasCookie($name)) {
+            return null;
+        }
+
+        $cookieValue = $_COOKIE[$name];
+        return ($this->config::COOKIE_ENCRYPTION) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
 	}
 
 	public function hasCookie(string $name): bool

@@ -11,7 +11,7 @@ abstract class Random
 	 * Function that generates a cryptographically secure random string
 	 * @param int $length Length of the string, if lower than 2, it gets clamped to 2
 	 * @return string
-	 * @uses bin2hex(), openssl_random_pseudo_bytes()
+	 * @uses bin2hex(), Random::bytesSafe()
 	 */
 	public static function stringSafe(int $length): string
 	{
@@ -19,8 +19,18 @@ abstract class Random
 			$length = 2;
 		}
 
-		return bin2hex(openssl_random_pseudo_bytes(intval($length / 2)));
+		return bin2hex(self::bytesSafe($length / 2));
 	}
+
+    /**
+     * Function that generates a cryptographically secure bytes
+     * @param int $length
+     * @return string
+     */
+    public static function bytesSafe(int $length): string
+    {
+        return openssl_random_pseudo_bytes($length);
+    }
 
 	/**
 	 * Function that generates cryptographically secure random floats

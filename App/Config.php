@@ -11,7 +11,7 @@ use Sdk\Middleware\CSRF;
 use Sdk\Middleware\Session;
 
 /**
- * Class that handles the {@see App} configuration
+ * Class that handles the {@see App} configuration, BROKE VERSIONING COMMIT
  */
 #[Immutable]
 final class Config
@@ -54,4 +54,10 @@ final class Config
 	 */
 	const SPOOF_SERVER_HEADER = true;
 	const SERVER_HEADER_VALUE = 'openresty';
+
+    /**
+     * Cookie encryption
+     * @uses \Sdk\Utils\Encryption\AES, \Sdk\Middleware\Session
+     */
+    const COOKIE_ENCRYPTION = false;
 }

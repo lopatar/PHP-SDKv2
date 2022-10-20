@@ -5,14 +5,18 @@ namespace Sdk;
 
 use App\Config;
 use Sdk\Database\MariaDB\Connection;
+use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
+use Sdk\Middleware\Entities\SessionVariable;
+use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Routing\Entities\Route;
 use Sdk\Routing\Router;
-
+use Sdk\Utils\Random;
+//BROKE VERSIONING COMMIT
 final class App
 {
 	private readonly Request $request;
@@ -25,14 +29,18 @@ final class App
 	 */
 	private array $middleware = [];
 
-	public function __construct(private readonly Config $config)
+    /**
+     * @throws SessionNotStarted
+     */
+    public function __construct(private readonly Config $config)
 	{
-		$this->request = new Request();
+		$this->request = new Request($this->config);
 		$this->response = new Response();
 		$this->router = new Router();
 
 		$this->initDatabaseConnection();
 		$this->spoofServerHeader();
+        $this->initCookieEncryption();
 	}
 
 	private function initDatabaseConnection(): void
@@ -138,4 +146,21 @@ final class App
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::cases());
 	}
+
+    /**
+     * Initializes the
+     * @throws SessionNotStarted
+     */
+    private function initCookieEncryption(): void
+    {
+        Cookie::setConfig($this->config);
+
+        if ($this->config::COOKIE_ENCRYPTION) {
+            if (!Middleware\Session::isStarted()) {
+                throw new SessionNotStarted('\\Sdk\\App');
+            }
+
+            Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
+        }
+    }
 }
