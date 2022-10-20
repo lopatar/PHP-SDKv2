@@ -3,14 +3,32 @@ declare(strict_types=1);
 
 namespace Sdk\Http\Entities;
 
-use JetBrains\PhpStorm\Immutable;
+use App\Config;
+use Sdk\Http\Exceptions\CookieDecryptFailed;
 use Sdk\Http\Request;
+use Sdk\Middleware\Entities\SessionVariable;
+use Sdk\Middleware\Session;
+use Sdk\Utils\Encryption\AES;
 
-//TODO: Cookie encryption
-#[Immutable]
 final class Cookie
 {
+    private static ?Config $config = null;
+
 	public function __construct(public readonly string $name, public readonly string $value) {}
+
+    /**
+     * @throws CookieDecryptFailed
+     */
+    public static function fromEncrypted(string $name, string $encryptedValue): self
+    {
+        $decryptedValue = AES::decryptString($encryptedValue, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value));
+
+        if ($decryptedValue === null) {
+            throw new CookieDecryptFailed($name, $encryptedValue);
+        }
+
+        return new self($name, $decryptedValue);
+    }
 
 	/**
 	 * This method creates the {@see Cookie} object and calls the {@see Cookie::create()} method
@@ -40,7 +58,8 @@ final class Cookie
 	 */
 	public function create(Request $request, int $expires = 0, string $path = '/', string $domain = '', bool $httpOnly = true, CookieSameSite $sameSite = CookieSameSite::STRICT): self
 	{
-		setcookie($this->name, $this->value, [
+        $cookieValue = (self::$config::COOKIE_ENCRYPTION) ? AES::encryptString($this->value, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) : $this->value;
+		setcookie($this->name, $cookieValue, [
 			'expires' => ($expires === 0) ? 0 : time() + $expires,
 			'path' => $path,
 			'domain' => ($domain === '') ? $request->getUrl()->domainName->domain : $domain,
@@ -77,4 +96,15 @@ final class Cookie
 	{
 		return new self($this->name, $value);
 	}
+
+    /**
+     * DO NOT USE, gets set in {@see App::initCookieEncryption()}
+     * @param Config $config
+     * @return void
+     * @internal
+     */
+    public static function setConfig(Config $config): void
+    {
+        self::$config = $config;
+    }
 }

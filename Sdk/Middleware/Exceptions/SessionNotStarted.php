@@ -5,10 +5,10 @@ namespace Sdk\Middleware\Exceptions;
 
 use Throwable;
 
-final class CSRFSessionNotStarted extends \Exception
+final class SessionNotStarted extends \Exception
 {
-	public function __construct(int $code = 0, ?Throwable $previous = null)
+	public function __construct(string $className, int $code = 0, ?Throwable $previous = null)
 	{
-		parent::__construct('Tried initializing CSRF middleware, while no \\Sdk\\Middleware\\Session middleware was configured!', $code, $previous);
+		parent::__construct("Tried initializing $className, while no \\Sdk\\Middleware\\Session middleware was configured!", $code, $previous);
 	}
 }

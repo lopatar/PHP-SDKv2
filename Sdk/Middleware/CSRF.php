@@ -8,7 +8,8 @@ use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
-use Sdk\Middleware\Exceptions\CSRFSessionNotStarted;
+use Sdk\Middleware\Entities\SessionVariable;
+use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Utils\Random;
 
@@ -23,7 +24,7 @@ final class CSRF implements IMiddleware
 
 	/**
 	 * This function is responsible for validating the POSTed token
-	 * @throws CSRFSessionNotStarted
+	 * @throws SessionNotStarted
 	 * @uses Session::isStarted(), Request::getPost(), CSRF::generateToken(), CSRF::isValid()
 	 */
 	public function execute(Request $request, Response $response, array $args): Response
@@ -33,10 +34,10 @@ final class CSRF implements IMiddleware
 		}
 
 		if (!Session::isStarted()) {
-			throw new CSRFSessionNotStarted();
+			throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
 		}
 
-		$token = $request->getPost('csrfToken');
+		$token = $request->getPost(SessionVariable::CSRF_TOKEN->value);
 
 		if (!$this->isValid($token)) {
 			$response->setStatusCode(StatusCode::FORBIDDEN);
@@ -49,21 +50,22 @@ final class CSRF implements IMiddleware
 
 	/**
 	 * This function should be used for outputting the HTML form input element for sending the CSRF token to server side
-	 * @throws CSRFSessionNotStarted
+	 * @throws SessionNotStarted
 	 * @uses Session::isStarted(), CSRF::getToken()
 	 */
 	public static function getInputField(): string
 	{
 		if (!Session::isStarted()) {
-			throw new CSRFSessionNotStarted();
+            throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
 		}
 
 		$token = self::getToken();
-		return "<input type=\"hidden\" name=\"csrfToken\" value=\"$token\" required>";
+        $inputName = SessionVariable::CSRF_TOKEN->value;
+		return "<input type=\"hidden\" name=\"$inputName\" value=\"$token\" required>";
 	}
 
 	/**
-	 * @throws CSRFSessionNotStarted
+	 * @throws SessionNotStarted
 	 */
 	private function isValid(string|null $token): bool
 	{
@@ -71,32 +73,32 @@ final class CSRF implements IMiddleware
 	}
 
 	/**
-	 * @throws CSRFSessionNotStarted
+	 * @throws SessionNotStarted
 	 */
 	private static function getToken(): string
 	{
 		if (!Session::isStarted()) {
-			throw new CSRFSessionNotStarted();
+            throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
 		}
 
 		if (self::isExpired()) {
 			return self::generateToken();
 		}
 
-		return Session::get('csrfToken');
+		return Session::get(SessionVariable::CSRF_TOKEN->value);
 	}
 
 	private static function isExpired(): bool
 	{
-		$expires = Session::get('csrfExpires');
+		$expires = Session::get(SessionVariable::CSRF_EXPIRES->value);
 		return $expires === null || time() > $expires;
 	}
 
 	private static function generateToken(): string
 	{
 		$token = Random::stringSafe(48);
-		Session::set('csrfToken', $token);
-		Session::set('csrfExpires', time() + self::$_config::CSRF_TOKEN_LIFETIME);
+		Session::set(SessionVariable::CSRF_TOKEN->value, $token);
+		Session::set(SessionVariable::CSRF_EXPIRES->value, time() + self::$_config::CSRF_TOKEN_LIFETIME);
 		return $token;
 	}
 }
