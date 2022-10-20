@@ -16,7 +16,7 @@ use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Routing\Entities\Route;
 use Sdk\Routing\Router;
 use Sdk\Utils\Random;
-//BROKE VERSIONING COMMIT
+
 final class App
 {
 	private readonly Request $request;

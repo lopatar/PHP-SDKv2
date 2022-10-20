@@ -11,7 +11,7 @@ use Sdk\Middleware\CSRF;
 use Sdk\Middleware\Session;
 
 /**
- * Class that handles the {@see App} configuration, BROKE VERSIONING COMMIT
+ * Class that handles the {@see App} configuration
  */
 #[Immutable]
 final class Config

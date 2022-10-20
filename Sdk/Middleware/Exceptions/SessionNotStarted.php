@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Sdk\Middleware\Exceptions;
 
 use Throwable;
-//BROKE VERSIONING COMMIT
+
 final class SessionNotStarted extends \Exception
 {
 	public function __construct(string $className, int $code = 0, ?Throwable $previous = null)

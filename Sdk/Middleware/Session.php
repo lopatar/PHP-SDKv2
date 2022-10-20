@@ -9,7 +9,6 @@ use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\Middleware\Interfaces\IMiddleware;
 
-//TODO: Maybe add categories?
 #[Immutable]
 final class Session implements IMiddleware
 {
