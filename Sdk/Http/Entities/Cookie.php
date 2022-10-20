@@ -9,7 +9,7 @@ use Sdk\Http\Request;
 use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Session;
 use Sdk\Utils\Encryption\AES;
-
+//BROKE VERSIONING COMMIT
 final class Cookie
 {
     private static ?Config $config = null;

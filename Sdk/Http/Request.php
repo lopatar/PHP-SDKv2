@@ -9,6 +9,7 @@ use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\Url;
 
 /**
+ * BROKE VERSIONING COMMIT
  * Class that gives user enough abstraction around the incoming HTTP request
  * @uses \Sdk\Http\Entities\RequestMethod
  * @uses \Sdk\Http\Entities\Cookie

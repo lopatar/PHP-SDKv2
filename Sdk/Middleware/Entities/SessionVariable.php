@@ -1,7 +1,7 @@
 <?php
 
 namespace Sdk\Middleware\Entities;
-
+//BROKE VERSIONING COMMIT
 enum SessionVariable: string
 {
     case CSRF_TOKEN = 'csrfToken';
