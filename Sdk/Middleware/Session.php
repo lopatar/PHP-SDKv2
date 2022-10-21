@@ -14,12 +14,12 @@ final class Session implements IMiddleware
 {
 	public function __construct(private readonly Config $config) {}
 
-	/**
-	 * Returns the value of session variable, set using {@see Session::set()}
-	 * @param string $name
-	 * @return string|float|int|null Null if not found
-	 */
-	public static function get(string $name): string|float|int|null
+    /**
+     * Returns the value of session variable, set using {@see Session::set()}
+     * @param string $name
+     * @return string|float|int|array|null Null if not found
+     */
+	public static function get(string $name): string|float|int|array|null
 	{
 		return $_SESSION[$name] ?? null;
 	}
@@ -40,7 +40,7 @@ final class Session implements IMiddleware
 	 * @param string|float|int $value
 	 * @return void
 	 */
-	public static function set(string $name, string|float|int $value): void
+	public static function set(string $name, string|float|int|array $value): void
 	{
 		if (self::isStarted()) {
 			$_SESSION[$name] = $value;

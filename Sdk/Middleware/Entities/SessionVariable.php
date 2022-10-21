@@ -2,6 +2,9 @@
 
 namespace Sdk\Middleware\Entities;
 
+/**
+ * @internal
+ */
 enum SessionVariable: string
 {
 	case CSRF_TOKEN = 'csrfToken';
