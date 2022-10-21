@@ -34,12 +34,12 @@ final class Session implements IMiddleware
 		return isset($_SESSION[$name]);
 	}
 
-	/**
-	 * Sets a session variable
-	 * @param string $name
-	 * @param string|float|int $value
-	 * @return void
-	 */
+    /**
+     * Sets a session variable
+     * @param string $name
+     * @param string|float|int|array $value
+     * @return void
+     */
 	public static function set(string $name, string|float|int|array $value): void
 	{
 		if (self::isStarted()) {
