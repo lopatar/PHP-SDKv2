@@ -14,6 +14,7 @@ use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Middleware\Session;
+use Sdk\Render\View;
 use Sdk\Routing\Entities\Route;
 use Sdk\Routing\Router;
 use Sdk\Utils\Random;
@@ -170,4 +171,22 @@ final class App
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::cases());
 	}
+
+    /**
+     * Function that allows us to create GET routes that directly render a {@see View} object, no need to define a controller
+     * @param string $requestPathFormat
+     * @param string|View $view Either a {@see View} object or fileName
+     * @return Route
+     */
+    public function view(string $requestPathFormat, string|View $view): Route
+    {
+        return $this->get($requestPathFormat, function (Request $request, Response $response, array $args) use ($view): Response {
+            if ($view instanceof View) {
+                $response->setView($view);
+            } else {
+                $response->createView($view);
+            }
+            return $response;
+        });
+    }
 }
