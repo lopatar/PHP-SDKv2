@@ -142,7 +142,7 @@ final class App
 	 */
 	public function route(string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, ?string $name = null): Route
 	{
-		$route = new Route($requestPathFormat, $callback, $requestMethod);
+		$route = new Route($requestPathFormat, $callback, $requestMethod, $name);
 		$this->router->addRoute($route);
 		return $route;
 	}
