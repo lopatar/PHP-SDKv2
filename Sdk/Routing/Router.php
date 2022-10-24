@@ -23,7 +23,7 @@ final class Router
 	 */
 	public function addRoute(Route $route): self
 	{
-		$existingRoute = $this->routePathExists($route->requestPathFormat);
+		$existingRoute = $this->routeExists($route);
 
 		if ($existingRoute !== null) {
 			throw new RouteAlreadyExists($route, $existingRoute);
@@ -44,10 +44,36 @@ final class Router
 		return null;
 	}
 
-	public function routePathExists(string $routePathFormat): ?Route
+	/**
+	 * Returns the existing {@see Route} object if it already exists within the {@see Router} object
+	 * @param Route $routeToCheck
+	 * @return Route|null
+	 */
+	public function routeExists(Route $routeToCheck): ?Route
+	{
+		foreach ($this->routes as $existingRoute) {
+			//the == operator is used intentionally, we want equality not identity
+			if ($existingRoute->requestMethod == $routeToCheck->requestMethod) {
+				return $existingRoute;
+			}
+
+			if ($existingRoute->name !== null && $existingRoute->name !== $routeToCheck->name) {
+				return $existingRoute;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets route by its {@see Route::$name}
+	 * @param string $name
+	 * @return Route|null
+	 */
+	public function getRoute(string $name): ?Route
 	{
 		foreach ($this->routes as $route) {
-			if ($route->requestPathFormat === $routePathFormat) {
+			if ($route->name === $name) {
 				return $route;
 			}
 		}

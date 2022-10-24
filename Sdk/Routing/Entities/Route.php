@@ -22,25 +22,20 @@ use Sdk\Routing\RouteMatcher;
 final class Route
 {
 	/**
-	 * @var RequestMethod|RequestMethod[] $requestMethod
+	 * @var RequestMethod[] $requestMethod
 	 */
-	public readonly RequestMethod|array $requestMethod;
-
+	public readonly array $requestMethod;
 	private RouteParameterCollection $parameters;
-
 	/**
 	 * @var string[] $requestPathFormatParts
 	 * Array of strings that contains the values after splitting {@see Route::$requestPathFormat} by '/'
 	 */
 	private array $requestPathFormatParts;
-
 	/**
 	 * @var IMiddleware[] $middleware
 	 */
 	private array $middleware = [];
-
 	private $callback;
-
 
 	/**
 	 * You can define parameters by using {} within the pathFormat (/hi/{username})
@@ -48,12 +43,17 @@ final class Route
 	 * @param string $requestPathFormat Request path format the route should match (e. g. /home)
 	 * @param RequestMethod|RequestMethod[] $requestMethod Routes can have multiple request methods
 	 */
-	public function __construct(public readonly string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod)
+	public function __construct(public readonly string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, public readonly ?string $name = null)
 	{
-		$this->requestMethod = $requestMethod;
 		$this->callback = (is_callable($callback)) ? $callback : $this->buildCallable($callback);
 		$this->requestPathFormatParts = explode('/', $this->requestPathFormat);
 		$this->parameters = new RouteParameterCollection($this->setUpParameters());
+
+		if (is_array($requestMethod)) {
+			$this->requestMethod = $requestMethod;
+		} else {
+			$this->requestMethod[] = $requestMethod;
+		}
 	}
 
 	/**
