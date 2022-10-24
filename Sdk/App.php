@@ -16,6 +16,7 @@ use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Middleware\Session;
 use Sdk\Render\View;
 use Sdk\Routing\Entities\Route;
+use Sdk\Routing\Exceptions\RouteAlreadyExists;
 use Sdk\Routing\Router;
 use Sdk\Utils\Random;
 
@@ -127,6 +128,9 @@ final class App
 		return $this;
 	}
 
+	/**
+	 * @throws RouteAlreadyExists
+	 */
 	public function get(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::GET);
@@ -134,6 +138,7 @@ final class App
 
 	/**
 	 * @param RequestMethod|RequestMethod[] $requestMethod
+	 * @throws RouteAlreadyExists
 	 */
 	public function route(string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod): Route
 	{
@@ -142,42 +147,61 @@ final class App
 		return $route;
 	}
 
+	/**
+	 * @throws RouteAlreadyExists
+	 */
 	public function post(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::POST);
 	}
 
+	/**
+	 * @throws RouteAlreadyExists
+	 */
 	public function put(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::PUT);
 	}
 
+	/**
+	 * @throws RouteAlreadyExists
+	 */
 	public function delete(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::DELETE);
 	}
 
+	/**
+	 * @throws RouteAlreadyExists
+	 */
 	public function options(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::OPTIONS);
 	}
 
+	/**
+	 * @throws RouteAlreadyExists
+	 */
 	public function patch(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::PATCH);
 	}
 
+	/**
+	 * @throws RouteAlreadyExists
+	 */
 	public function any(string $requestPathFormat, callable|string $callback): Route
 	{
 		return $this->route($requestPathFormat, $callback, RequestMethod::cases());
 	}
 
-    /**
-     * Function that allows us to create GET routes that directly render a {@see View} object, no need to define a controller
-     * @param string $requestPathFormat
-     * @param string|View $view Either a {@see View} object or fileName
-     * @return Route
-     */
+	/**
+	 * Function that allows us to create GET routes that directly render a {@see View} object, no need to define a controller
+	 * @param string $requestPathFormat
+	 * @param string|View $view Either a {@see View} object or fileName
+	 * @return Route
+	 * @throws RouteAlreadyExists
+	 */
     public function view(string $requestPathFormat, string|View $view): Route
     {
         return $this->get($requestPathFormat, function (Request $request, Response $response, array $args) use ($view): Response {

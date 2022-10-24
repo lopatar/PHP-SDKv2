@@ -18,6 +18,7 @@
   },
   "require": {
     "ext-mysqli": "*",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "ext-curl": "*"
   }
 }

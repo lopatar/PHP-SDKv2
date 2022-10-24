@@ -13,7 +13,6 @@ use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Utils\Random;
 
-//TODO: FINISH, ADD CHECK METHODS (POST, COOKIE, X-CSRF-HEADER)
 final class CSRF implements IMiddleware
 {
 	private static ?Config $_config = null;
@@ -64,6 +63,7 @@ final class CSRF implements IMiddleware
 
 		return $response;
 	}
+
 
 	/**
 	 * @throws SessionNotStarted
