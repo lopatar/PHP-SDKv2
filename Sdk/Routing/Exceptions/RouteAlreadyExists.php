@@ -24,7 +24,7 @@ final class RouteAlreadyExists extends \Exception
 			$message = 'request methods: ';
 			$methodCount = count($route->requestMethod) - 1; //-1 so we can iterate with <= and compare using === ()
 
-			for ($i = 0; $i <= $methodCount - 1; $i++) {
+			for ($i = 0; $i <= $methodCount; $i++) {
 				$requestMethod = $route->requestMethod[$i]->value;
 				$message .= ($i === $methodCount) ? $requestMethod : "$requestMethod, ";
 			}

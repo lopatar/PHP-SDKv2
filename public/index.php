@@ -10,7 +10,7 @@ $config = new Config();
 
 $app = new App($config);
 try {
-	$app->get('/', 'Home::main');
+	$app->any('/', 'Home::main');
 	$app->get('/', 'Home::main');
 } catch (\Sdk\Routing\Exceptions\RouteAlreadyExists $ex) {
 	echo $ex->getMessage();
