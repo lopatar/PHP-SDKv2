@@ -22,7 +22,7 @@ final class RouteMatcher
 	 */
 	public function matchRequestMethod(): bool
 	{
-		return (is_array($this->route->requestMethod)) ? in_array($this->request->method, $this->route->requestMethod) : $this->route->requestMethod === $this->request->method;
+		return in_array($this->request->method, $this->route->requestMethod);
 	}
 
 	/**

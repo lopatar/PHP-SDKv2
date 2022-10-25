@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace Sdk\Http;
 
 use App\Config;
+use Sdk\App;
 use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\Url;
 use Sdk\Http\Exceptions\CookieDecryptFailed;
+use Sdk\Middleware\Interfaces\IMiddleware;
+use Sdk\Routing\Entities\Route;
 
 /**
  * BROKE VERSIONING COMMIT
@@ -33,6 +36,11 @@ final class Request
 	 */
 	public readonly array $headers;
 	private Url $url;
+
+	/**
+	 * @var Route|null Route associated with the current object, will be null for {@see App} middleware
+	 */
+	private ?Route $route = null;
 
 	public function __construct(private readonly Config $config)
 	{
@@ -140,6 +148,26 @@ final class Request
 		return $cookies;
 	}
 
+	/**
+	 * DO NOT USE, INTERNAL USE ONLY
+	 * @param Route $route
+	 * @return $this
+	 * @internal
+	 */
+	public function setRoute(Route $route): self
+	{
+		$this->route = $route;
+		return $this;
+	}
+
+	/**
+	 * Gets the route associated with the current {@see Request} object, will be null for {@see App} {@see IMiddleware middleware}
+	 * @return Route|null
+	 */
+	public function getRoute(): ?Route
+	{
+		return $this->route;
+	}
 
 	public function hasHeader(string $name): bool
 	{

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Sdk\Routing\Entities;
 
+use PhpParser\Node\Param;
 use Sdk\Routing\ParamValidator;
 
 final class RouteParameter
@@ -36,20 +37,30 @@ final class RouteParameter
 	/**
 	 * DO NOT USE, value will be overwritten on {@see App::run()}
 	 * @param string $value
-	 * @return bool
+	 * @return bool Whether the value followed all constraints defined by the {@see RouteParameter}
+	 * @uses \Sdk\Routing\Entities\RouteParameter::validateValue()
 	 * @internal
 	 */
 	public function setValue(string $value): bool
 	{
-		$paramValidator = new ParamValidator($this);
-
-		if (!$paramValidator->validate($value)) {
+		if (!$this->validateValue($value)) {
 			return false;
 		}
 
 		$this->value = ($this->shouldEscape) ? htmlentities($value) : $value;
 
 		return true;
+	}
+
+	/**
+	 * Returns whether the value followed all constraints defined by the {@see RouteParameter}
+	 * @param string $value
+	 * @return bool
+	 * @uses \Sdk\Routing\ParamValidator
+	 */
+	public function validateValue(string $value): bool
+	{
+		return (new ParamValidator($this))->validate($value);
 	}
 
 	/**

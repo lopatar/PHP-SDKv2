@@ -38,6 +38,7 @@ final class App
 		$this->response = new Response();
 		$this->router = new Router();
 
+		//TODO: Config handler
 		$this->initDatabaseConnection();
 		$this->spoofServerHeader();
 	}
@@ -66,6 +67,7 @@ final class App
 		$matchedRoute = $this->router->matchRoute($this->request);
 
 		if ($matchedRoute !== null) {
+			$this->request->setRoute($matchedRoute);
 			$this->response = $matchedRoute->execute($this->request, $this->response);
 		} else {
 			$this->response->setStatusCode(StatusCode::NOT_FOUND);

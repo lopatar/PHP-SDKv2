@@ -10,10 +10,7 @@ require __DIR__ . '/../vendor/autoload.php';
 $config = new Config();
 
 $app = new App($config);
-try {
-	$app->any('/{test}/{lmao}', 'Home::main');
-	$app->get('/{test}/{lmao}', 'Home::main');
-} catch (RouteAlreadyExists $ex) {
-	echo $ex->getMessage();
-}
+
+$app->get('/{first}/{last}', 'Home::main');
+
 $app->run();

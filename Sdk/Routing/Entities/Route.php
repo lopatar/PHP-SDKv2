@@ -9,6 +9,7 @@ use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\Middleware\Interfaces\IMiddleware;
+use Sdk\Routing\Exceptions\RouteUrlGenerationFailure;
 use Sdk\Routing\RouteMatcher;
 
 /**
@@ -48,12 +49,7 @@ final class Route
 		$this->callback = (is_callable($callback)) ? $callback : $this->buildCallable($callback);
 		$this->requestPathFormatParts = explode('/', $this->requestPathFormat);
 		$this->parameters = new RouteParameterCollection($this->setUpParameters());
-
-		if (is_array($requestMethod)) {
-			$this->requestMethod = $requestMethod;
-		} else {
-			$this->requestMethod[] = $requestMethod;
-		}
+		$this->requestMethod = (is_array($requestMethod)) ? $requestMethod : [$requestMethod];
 	}
 
 	/**
@@ -137,6 +133,35 @@ final class Route
 	{
 		$this->middleware = array_merge($this->middleware, $middleware);
 		return $this;
+	}
+
+	/**
+	 * @param array $parameters
+	 * @param bool $validateValues Whether this function should value parameter values that the {@see RouteParameter route parameters have}
+	 * @return string
+	 * @throws RouteUrlGenerationFailure
+	 */
+	public function generateUrl(array $parameters, bool $validateValues = true): string
+	{
+		if (!$this->hasParameters()) {
+			return $this->requestPathFormat;
+		}
+
+		foreach ($this->parameters as $routeParameter) {
+			if (!isset($parameters[$routeParameter->name])) {
+				throw new RouteUrlGenerationFailure("Parameters passed dont contain the following parameter: $routeParameter->name");
+			}
+
+			$paramValue = $parameters[$routeParameter->name];
+
+			if ($validateValues && !$routeParameter->validateValue($paramValue)) {
+				throw new RouteUrlGenerationFailure("Value: $paramValue does not pass the constraints of parameter: $routeParameter->name");
+			}
+
+			$parametersArray[$routeParameter->formatIndex] = $paramValue;
+		}
+
+		return '/'. implode('/', $parametersArray); //static analysis complains about not being (probably) defined, however all edge cases are covered (hope so, haha.)
 	}
 
 	/**

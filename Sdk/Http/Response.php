@@ -48,9 +48,15 @@ final class Response
 		return $this;
 	}
 
-	public function writeLine(string $text): self
+	/**
+	 * @param string $text
+	 * @param bool $useHtmlBr Whether to use the br html tag or \n for new line
+	 * @return $this
+	 */
+	public function writeLine(string $text, bool $useHtmlBr = false): self
 	{
-		$this->text .= "$text\n";
+		$text .= ($useHtmlBr) ? "<br/>" : "\n";
+		$this->text .= $text;
 		return $this;
 	}
 
