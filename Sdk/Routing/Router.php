@@ -57,7 +57,7 @@ final class Router
 				return $existingRoute;
 			}
 
-			if ($existingRoute->name !== null && $existingRoute->name !== $routeToCheck->name) {
+			if ($existingRoute->name !== null && $existingRoute->name === $routeToCheck->name) {
 				return $existingRoute;
 			}
 		}

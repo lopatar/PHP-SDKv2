@@ -41,7 +41,7 @@ final class RouteParameter
 	 */
 	public function setValue(string $value): bool
 	{
-		$paramValidator = new ParamValidator($this->type, $this->minLimit, $this->maxLimit);
+		$paramValidator = new ParamValidator($this);
 
 		if (!$paramValidator->validate($value)) {
 			return false;
@@ -61,6 +61,11 @@ final class RouteParameter
 	{
 		$this->type = $type;
 		return $this;
+	}
+
+	public function getType(): RouteParameterType
+	{
+		return $this->type;
 	}
 
 	/**
@@ -113,6 +118,11 @@ final class RouteParameter
 		return $this;
 	}
 
+	public function getMinLimit(): float|int|null
+	{
+		return $this->minLimit;
+	}
+
 	/**
 	 * Function that allows us to set maximum limit for the {@see RouteParameter::$value}
 	 *
@@ -133,6 +143,11 @@ final class RouteParameter
 
 		$this->maxLimit = $maxLimit;
 		return $this;
+	}
+
+	public function getMaxLimit(): int|float|null
+	{
+		return $this->maxLimit;
 	}
 
 	public function getRoute(): Route

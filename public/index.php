@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Config;
 use Sdk\App;
+use Sdk\Routing\Exceptions\RouteAlreadyExists;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -12,7 +13,7 @@ $app = new App($config);
 try {
 	$app->any('/{test}/{lmao}', 'Home::main');
 	$app->get('/{test}/{lmao}', 'Home::main');
-} catch (\Sdk\Routing\Exceptions\RouteAlreadyExists $ex) {
+} catch (RouteAlreadyExists $ex) {
 	echo $ex->getMessage();
 }
 $app->run();

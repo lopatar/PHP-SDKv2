@@ -8,7 +8,7 @@ use Sdk\Routing\Entities\RouteParameterType;
 
 final class ParamValidator
 {
-	public function __construct(private readonly RouteParameterType $type, private readonly int|float|null $minLimit, private readonly int|float|null $maxLimit) {}
+	public function __construct(private readonly RouteParameter $parameter) {}
 
 	/**
 	 * Method that validates the {@see RouteParameter} object and a value
@@ -17,7 +17,7 @@ final class ParamValidator
 	 */
 	public function validate(string $value): bool
 	{
-		switch ($this->type) {
+		switch ($this->parameter->getType()) {
 			case RouteParameterType::STRING:
 				return $this->validateStringLength($value);
 			case RouteParameterType::BOOL:
@@ -41,11 +41,11 @@ final class ParamValidator
 	{
 		$strLength = strlen($value);
 
-		if ($this->minLimit !== null && $strLength < $this->minLimit) {
+		if ($this->parameter->getMinLimit() !== null && $strLength < $this->parameter->getMinLimit()) {
 			return false;
 		}
 
-		if ($this->maxLimit !== null && $strLength > $this->maxLimit) {
+		if ($this->parameter->getMaxLimit() !== null && $strLength > $this->parameter->getMaxLimit()) {
 			return false;
 		}
 
@@ -54,11 +54,11 @@ final class ParamValidator
 
 	private function validateNumRange(int|float $value): bool
 	{
-		if ($this->minLimit !== null && $value < $this->minLimit) {
+		if ($this->parameter->getMinLimit() !== null && $value < $this->parameter->getMinLimit()) {
 			return false;
 		}
 
-		if ($this->maxLimit !== null && $value > $this->maxLimit) {
+		if ($this->parameter->getMaxLimit() !== null && $value > $this->parameter->getMaxLimit()) {
 			return false;
 		}
 
