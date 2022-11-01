@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 namespace Sdk\Middleware;
-//BROKE VERSIONING COMMIT
+
 use App\Config;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
@@ -25,17 +25,24 @@ final class CSRF implements IMiddleware
 	/**
 	 * This function should be used for outputting the HTML form input element for sending the CSRF token to server side
 	 * @throws SessionNotStarted
-	 * @uses Session::isStarted(), CSRF::getToken()
+	 * @uses CSRF::getToken()
 	 */
 	public static function getInputField(): string
 	{
-		if (!Session::isStarted()) {
-			throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
-		}
-
 		$token = self::getToken();
 		$inputName = SessionVariable::CSRF_TOKEN->value;
 		return "<input type=\"hidden\" name=\"$inputName\" value=\"$token\" required>";
+	}
+
+	/**
+	 * This function is a way to pass the CSRF token to client without using an HTML input field
+	 * @throws SessionNotStarted
+	 * @uses CSRF::getToken()
+	 */
+	public static function setTokenHeader(Response $response): Response
+	{
+		$response->addHeader(SessionVariable::CSRF_TOKEN->value, self::getToken());
+		return $response;
 	}
 
 	/**
@@ -45,15 +52,11 @@ final class CSRF implements IMiddleware
 	 */
 	public function execute(Request $request, Response $response, array $args): Response
 	{
-		if ($request->method !== RequestMethod::POST) { //if not a POST request, we continue without checking
-			return $response;
-		}
-
 		if (!Session::isStarted()) {
 			throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
 		}
 
-		$token = $request->getPost(SessionVariable::CSRF_TOKEN->value);
+		$token = ($request->method === RequestMethod::POST) ? $request->getPost(SessionVariable::CSRF_TOKEN->value) : $request->getHeader(SessionVariable::CSRF_TOKEN->value);
 
 		if (!$this->isValid($token)) {
 			$response->setStatusCode(StatusCode::FORBIDDEN);

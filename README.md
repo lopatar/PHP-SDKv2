@@ -8,9 +8,8 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 # TODO:
 
 - Session categories
-- More CSRF methods (header, cookie)
+- More CSRF methods (cookie)
 - Examples of features
-- cURL wrapper
 - HTTP basic auth middleware (based on IAuthorization)
 
 # Requirements

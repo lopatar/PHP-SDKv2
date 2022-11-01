@@ -52,9 +52,11 @@ final class Router
 	public function routeExists(Route $routeToCheck): ?Route
 	{
 		foreach ($this->routes as $existingRoute) {
-			//the == operator is used intentionally, we want equality not identity
-			if ($existingRoute->requestMethod == $routeToCheck->requestMethod) {
-				return $existingRoute;
+			if ($existingRoute->requestPathFormat === $routeToCheck->requestPathFormat) {
+				//the == operator is used intentionally, we want equality not identity
+				if ($existingRoute->requestMethod == $routeToCheck->requestMethod) {
+					return $existingRoute;
+				}
 			}
 
 			if ($existingRoute->name !== null && $existingRoute->name === $routeToCheck->name) {

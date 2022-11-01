@@ -9,6 +9,7 @@ use Sdk\Database\MariaDB\Connection;
 use Sdk\Http\Entities\CookieSameSite;
 use Sdk\Middleware\CSRF;
 use Sdk\Middleware\Session;
+use Exception;
 
 /**
  * Class that handles the {@see App} configuration
@@ -16,6 +17,11 @@ use Sdk\Middleware\Session;
 #[Immutable]
 final class Config
 {
+	/**
+	 * If false, we output {@see Exception::$message} thrown in {@see Route::execute()} to {@see Response::$text}
+	 */
+	const IS_PRODUCTION = true;
+
 	/**
 	 * MySQL/MariDB DB configuration
 	 * @see Connection, App::initDatabaseConnection()
