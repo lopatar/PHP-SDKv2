@@ -18,9 +18,7 @@ final class RouteAlreadyExists extends \Exception
 
 	private function buildRequestMethodString(Route $route): string
 	{
-		$isArray = is_array($route->requestMethod);
-
-		if ($isArray) {
+		if (count($route->requestMethod) > 1) {
 			$message = 'request methods: ';
 			$methodCount = count($route->requestMethod) - 1; //-1 so we can iterate with <= and compare using === ()
 
@@ -29,7 +27,7 @@ final class RouteAlreadyExists extends \Exception
 				$message .= ($i === $methodCount) ? $requestMethod : "$requestMethod, ";
 			}
 		} else {
-			$message = 'request method: ' . $route->requestMethod->value; //PHP cannot do double property access in "" string
+			$message = 'request method: ' . $route->requestMethod[0]->value; //PHP cannot do double property access in "" string
 		}
 
 		return $message;
