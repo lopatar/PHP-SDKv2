@@ -12,7 +12,12 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 # Requirements
 
 - PHP 8.1
+- Composer
 - Web server (routing all requests to public/index.php)
+
+
+# Installation
+To install, run install.sh and point your web server to the newly created public/index.php file
 
 # Routing requests to index.php
 
