@@ -17,7 +17,7 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
 
 # Installation
-To install, run install.sh and point your web server to the newly created public/index.php file
+To install, run [install.sh](https://github.com/lopatar/PHP-SDKv2/blob/main/install.sh) and point your web server to the newly created public/index.php file
 
 # Routing requests to index.php
 
