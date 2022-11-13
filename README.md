@@ -3,12 +3,6 @@
 Powerful PHP framework, written in PHP 8.1, modernised version of rather
 primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
-# THIS DOCUMENTATION IS WORK IN PROGRESS
-
-# TODO:
-
-- Examples of features
-
 # Requirements
 
 - PHP 8.1
@@ -17,8 +11,11 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
 
 # Installation
-
-
+To install the SDK, please run the following composer command
+```shell
+composer create-project lopatar/php-sdkv2 <PROJECT-NAME>
+```
+A folder called PROJECT-NAME will be created, please point your web server to /path/to/<PROJECT-NAME>/public/index.php
 # Routing requests to index.php
 
 - NGINX
