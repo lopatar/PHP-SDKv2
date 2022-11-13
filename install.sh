@@ -1,8 +1,8 @@
 #!/bin/bash
 echo "Installing..."
-mkdir App, public
+mkdir App public
 echo "Created App & public folders"
-mkdir App/Controllers, App/Views, App/Models
+mkdir App/Controllers App/Views App/Models
 echo "Created App/Controllers, App/Views & App/Models folders"
 
 cp Config.sample.php App/Config.php
