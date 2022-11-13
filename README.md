@@ -7,10 +7,7 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
 # TODO:
 
-- Session categories
-- More CSRF methods (cookie)
 - Examples of features
-- HTTP basic auth middleware (based on IAuthorization)
 
 # Requirements
 
@@ -36,7 +33,7 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
     - [URL](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Http/Entities/Url.php) management
     - [Cookie](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Http/Entities/Cookie.php) management
         - Cookies can be automatically encrypted & decrypted
-          using [AES-256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/App/Config.php#L62)
+          using [AES-256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/App/Config.php#L68)
     - Headers, GET, POST, SERVER variables management
 - [Response](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Http/Response.php) object
     - [View](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Render/View.php) system (injecting PHP variables into
@@ -56,14 +53,14 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
       CSRF attacks
 - Database connectors
     - [MySQL/MariaDB](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Database/MariaDB/Connection.php) connector,
-      configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/App/Config.php) system
+      configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Config.sample.php) system
 - [Utilities](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/) namespace
     - [Encryption](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption) namespace
         - [AES256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption/AES256.php) class
         - [Random](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Random.php) class, used for generating
           random **crypto safe** & non-safe values
-- [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/App/Config.php) object
+- [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Config.sample.php) object
     - Used for configuring database connectors, session & CSRF middleware
     - Cookie encryption toggle
-    - [Server header spoofing](https://github.com/lopatar/PHP-SDKv2/blob/main/App/Config.php#L55) feature, can be used
+    - [Server header spoofing](https://github.com/lopatar/PHP-SDKv2/blob/main/Config.sample.php#L61) feature, can be used
       to hide your web server software

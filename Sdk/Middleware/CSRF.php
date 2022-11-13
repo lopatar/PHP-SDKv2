@@ -35,17 +35,6 @@ final class CSRF implements IMiddleware
 	}
 
 	/**
-	 * This function is a way to pass the CSRF token to client without using an HTML input field
-	 * @throws SessionNotStarted
-	 * @uses CSRF::getToken()
-	 */
-	public static function setTokenHeader(Response $response): Response
-	{
-		$response->addHeader(SessionVariable::CSRF_TOKEN->value, self::getToken());
-		return $response;
-	}
-
-	/**
 	 * This function is responsible for validating the POSTed token
 	 * @throws SessionNotStarted
 	 * @uses Session::isStarted(), Request::getPost(), CSRF::generateToken(), CSRF::isValid()

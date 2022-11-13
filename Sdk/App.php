@@ -38,7 +38,6 @@ final class App
 		$this->response = new Response();
 		$this->router = new Router();
 
-		//TODO: Config handler
 		$this->initDatabaseConnection();
 		$this->spoofServerHeader();
 	}

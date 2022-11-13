@@ -14,7 +14,7 @@
   ],
   "description": "Second generation of my experimental PHP SDK!",
   "require-dev": {
-    "phpstan/phpstan": "^1.8"
+    "phpstan/phpstan": "*"
   },
   "require": {
     "ext-mysqli": "*",
