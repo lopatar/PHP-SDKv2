@@ -1,5 +1,6 @@
 {
   "name": "lopatar/php-sdkv2",
+  "license": "WTFPL",
   "autoload": {
     "psr-4": {
       "Sdk\\": "Sdk/",
