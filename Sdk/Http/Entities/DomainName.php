@@ -43,7 +43,7 @@ final class DomainName
 
 		if ($count > 2) {
 			//there are subdomains present
-			for ($i = $count - 3; $i >= 0; $i++) {
+			for ($i = $count - 3; $i >= 0; $i--) {
 				$this->subDomains[] = $nameParts[$i];
 			}
 		}
