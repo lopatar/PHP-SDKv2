@@ -72,8 +72,6 @@ final class App
 			$this->response->setStatusCode(StatusCode::NOT_FOUND);
 		}
 
-		Connection::getMysqlConnection()?->close();
-
 		$this->response->send();
 	}
 
