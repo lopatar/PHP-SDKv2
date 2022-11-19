@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Sdk\Middleware;
 
-use Sdk\Config;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
+use Sdk\IConfig;
 use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
@@ -15,6 +15,13 @@ use Sdk\Utils\Random;
 
 final class CSRF implements IMiddleware
 {
+	private static IConfig $config;
+
+	public function __construct(IConfig $config)
+	{
+		self::$config = $config;
+	}
+
 	/**
 	 * This function should be used for outputting the HTML form input element for sending the CSRF token to server side
 	 * @throws SessionNotStarted
@@ -53,7 +60,7 @@ final class CSRF implements IMiddleware
 	{
 		$token = Random::stringSafe(48);
 		Session::set(SessionVariable::CSRF_TOKEN->value, $token);
-		Session::set(SessionVariable::CSRF_EXPIRES->value, time() + Config::CSRF_TOKEN_LIFETIME);
+		Session::set(SessionVariable::CSRF_EXPIRES->value, time() + self::$config->getCsrfTokenLifetime());
 		return $token;
 	}
 

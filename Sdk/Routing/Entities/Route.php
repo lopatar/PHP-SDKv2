@@ -5,11 +5,11 @@ namespace Sdk\Routing\Entities;
 
 use Exception;
 use Sdk\App;
-use Sdk\Config;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
+use Sdk\IConfig;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Routing\Exceptions\RouteUrlGenerationFailure;
 use Sdk\Routing\RouteMatcher;
@@ -46,7 +46,7 @@ final class Route
 	 * @param string $requestPathFormat Request path format the route should match (e. g. /home)
 	 * @param RequestMethod|RequestMethod[] $requestMethod Routes can have multiple request methods
 	 */
-	public function __construct(public readonly string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, public readonly ?string $name = null)
+	public function __construct(public readonly string $requestPathFormat, public readonly IConfig $config, callable|string $callback, RequestMethod|array $requestMethod, public readonly ?string $name = null)
 	{
 		$this->callback = (is_callable($callback)) ? $callback : $this->buildCallable($callback);
 		$this->requestPathFormatParts = explode('/', $this->requestPathFormat);
@@ -184,7 +184,7 @@ final class Route
 			return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
 		} catch (Exception $e) {
 			$response->setStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
-			$response->writeLine((Config::IS_PRODUCTION) ? 'Internal server error occurred, please try again later.' : $e->getMessage());
+			$response->writeLine(($this->config->isProduction()) ? 'Internal server error occurred, please try again later.' : $e->getMessage());
 			return $response;
 		}
 	}

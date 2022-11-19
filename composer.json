@@ -4,8 +4,7 @@
   "license": "WTFPL",
   "autoload": {
     "psr-4": {
-      "Sdk\\": "Sdk/",
-      "App\\": "App/"
+      "Sdk\\": "Sdk/"
     }
   },
   "authors": [

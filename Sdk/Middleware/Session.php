@@ -4,14 +4,16 @@ declare(strict_types=1);
 namespace Sdk\Middleware;
 
 use JetBrains\PhpStorm\Immutable;
-use Sdk\Config;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
+use Sdk\IConfig;
 use Sdk\Middleware\Interfaces\IMiddleware;
 
 #[Immutable]
 final class Session implements IMiddleware
 {
+	public function __construct(private readonly IConfig $config) {}
+
 	/**
 	 * Returns the value of session variable, set using {@see Session::set()}
 	 * @param string $name
@@ -58,14 +60,14 @@ final class Session implements IMiddleware
 	{
 		if (!self::isStarted()) {
 			session_start([
-				'name' => Config::SESSION_NAME,
-				'use_strict_mode' => Config::SESSION_STRICT_MODE,
-				'cookie_path' => Config::SESSION_COOKIE_PATH,
-				'cookie_lifetime' => Config::SESSION_LIFETIME,
-				'cookie_httponly' => Config::SESSION_COOKIE_HTTPONLY,
-				'cookie_samesite' => Config::SESSION_COOKIE_SAMESITE->value,
-				'sid_length' => Config::SESSION_ID_LENGTH,
-				'sid_bits_per_character' => Config::SESSION_ID_BITS_PER_CHAR,
+				'name' => $this->config->getSessionName(),
+				'use_strict_mode' => $this->config->isSessionStrictModeEnabled(),
+				'cookie_path' => $this->config->getSessionCookiePath(),
+				'cookie_lifetime' => $this->config->getSessionLifetime(),
+				'cookie_httponly' => $this->config->isSessionCookieHttpOnly(),
+				'cookie_samesite' => $this->config->getSessionCookieSameSite()->value,
+				'sid_length' => $this->config->getSessionIdLength(),
+				'sid_bits_per_character' => $this->config->getSessionIdBitsPerChar(),
 				'cookie_secure' => $request->isHttps(),
 				'use_cookies' => true,
 				'use_only_cookies' => true,

@@ -24,16 +24,21 @@ composer require "lopatar/php-sdkv2"
         - Models (where your model files reside)
 
 - Map the App namespace in composer.json like so
+
 ```json
   "autoload": {
-    "psr-4": {
-      "App\\": "App/"
-    }
-  }
+"psr-4": {
+"App\\": "App/"
+}
+}
 ```
 
+- Create your configuration class
+
 - Done! (**TODO:** Skeleton project with those already installed!)
+
 # Routing requests to index.php
+
 - NGINX
 
 ```
@@ -43,6 +48,18 @@ composer require "lopatar/php-sdkv2"
     location / {
         try_files $uri /index.php$is_args$args =404;
     }
+```
+
+# Configuration class
+
+The App object expects an instance of IConfig passed to the constructor, please create your class such as:
+
+```php
+<?php
+final class Config implements \Sdk\IConfig
+{
+
+}
 ```
 
 # Features

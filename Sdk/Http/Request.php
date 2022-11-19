@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Sdk\Http;
 
 use Sdk\App;
-use Sdk\Config;
 use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\Url;
 use Sdk\Http\Exceptions\CookieDecryptFailed;
+use Sdk\IConfig;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Routing\Entities\Route;
 
@@ -42,7 +42,7 @@ final class Request
 	 */
 	private ?Route $route = null;
 
-	public function __construct()
+	public function __construct(private readonly IConfig $config)
 	{
 		$this->method = RequestMethod::from($this->getServer('REQUEST_METHOD'));
 		$this->protocol = $this->getServer('SERVER_PROTOCOL');
@@ -121,7 +121,7 @@ final class Request
 
 		$cookieValue = $_COOKIE[$name];
 		//only decrypt cookies if encryption is enabled & name differs from session cookie name
-		return (Config::COOKIE_ENCRYPTION && Config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
+		return ($this->config->isCookieEncryptionEnabled() && $this->config->getSessionName() !== $name) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
 	}
 
 	public function hasCookie(string $name): bool
@@ -142,7 +142,7 @@ final class Request
 
 		foreach ($_COOKIE as $name => $value) {
 			//only decrypt cookies if encryption is enabled & name differs from session cookie name
-			$cookies[] = (Config::COOKIE_ENCRYPTION && Config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $value) : new Cookie($name, $value);
+			$cookies[] = ($this->config->isCookieEncryptionEnabled() && $this->config->getSessionName() !== $name) ? Cookie::fromEncrypted($name, $value) : new Cookie($name, $value);
 		}
 
 		return $cookies;

@@ -3,15 +3,17 @@ declare(strict_types=1);
 
 namespace Sdk\Http\Entities;
 
-use Sdk\Config;
 use Sdk\Http\Exceptions\CookieDecryptFailed;
 use Sdk\Http\Request;
+use Sdk\IConfig;
 use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Session;
 use Sdk\Utils\Encryption\AES;
 
 final class Cookie
 {
+	private static IConfig $config;
+
 	public function __construct(public readonly string $name, public readonly string $value) {}
 
 	/**
@@ -27,6 +29,11 @@ final class Cookie
 		}
 
 		return new self($name, $decryptedValue);
+	}
+
+	public static function setConfig(IConfig $config): void
+	{
+		self::$config = $config;
 	}
 
 	/**
@@ -58,7 +65,7 @@ final class Cookie
 	 */
 	public function create(Request $request, int $expires = 0, string $path = '/', string $domain = '', bool $httpOnly = true, CookieSameSite $sameSite = CookieSameSite::STRICT): self
 	{
-		$cookieValue = (Config::COOKIE_ENCRYPTION) ? AES::encryptString($this->value, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) : $this->value;
+		$cookieValue = (self::$config->isCookieEncryptionEnabled()) ? AES::encryptString($this->value, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) : $this->value;
 		setcookie($this->name, $cookieValue, [
 			'expires' => ($expires === 0) ? 0 : time() + $expires,
 			'path' => $path,

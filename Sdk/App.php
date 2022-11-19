@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Sdk;
 
 use Sdk\Database\MariaDB\Connection;
+use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
@@ -28,9 +29,9 @@ final class App
 	 */
 	private array $middleware = [];
 
-	public function __construct()
+	public function __construct(private readonly IConfig $config)
 	{
-		$this->request = new Request();
+		$this->request = new Request($this->config);
 		$this->response = new Response();
 		$this->router = new Router();
 
@@ -40,15 +41,15 @@ final class App
 
 	private function initDatabaseConnection(): void
 	{
-		if (Config::USE_MARIADB) {
-			Connection::init(Config::MARIADB_HOST, Config::MARIADB_USERNAME, Config::MARIADB_PASSWORD, Config::MARIADB_DB_NAME);
+		if ($this->config->isMariaDbEnabled()) {
+			Connection::init($this->config->getMariaDbHost(), $this->config->getMariaDbUsername(), $this->config->getMariaDbPassword(), $this->config->getMariaDbDatabaseName());
 		}
 	}
 
 	private function spoofServerHeader(): void
 	{
-		if (Config::SPOOF_SERVER_HEADER) {
-			$this->response->addHeader('Server', Config::SERVER_HEADER_VALUE);
+		if ($this->config->isSpoofedServerHeadEnabled()) {
+			$this->response->addHeader('Server', $this->config->getSpoofedServerValue());
 		}
 	}
 
@@ -95,7 +96,9 @@ final class App
 	 */
 	private function initCookieEncryption(): void
 	{
-		if (Config::COOKIE_ENCRYPTION) {
+		Cookie::setConfig($this->config);
+
+		if ($this->config->isCookieEncryptionEnabled()) {
 			if (!Session::isStarted()) {
 				throw new SessionNotStarted('\\Sdk\\App');
 			}
@@ -135,7 +138,7 @@ final class App
 	 */
 	public function route(string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, ?string $name = null): Route
 	{
-		$route = new Route($requestPathFormat, $callback, $requestMethod, $name);
+		$route = new Route($requestPathFormat, $this->config, $callback, $requestMethod, $name);
 		$this->router->addRoute($route);
 		return $route;
 	}
