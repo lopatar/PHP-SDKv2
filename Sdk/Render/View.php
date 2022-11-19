@@ -25,7 +25,7 @@ final class View
 
 	private function buildViewPath(string $fileName): string
 	{
-		return __DIR__ . "/../../App/Views/$fileName";
+		return __DIR__ . "/../../../../../App/Views/$fileName";
 	}
 
 	/**
