@@ -5,6 +5,7 @@ namespace Sdk\Database\MariaDB;
 
 use mysqli;
 use mysqli_result;
+use Sdk\Database\Exceptions\DatabaseObjectNotInitialized;
 
 /**
  * Class that gives us ability to query MariDB database using prepared statements
@@ -28,10 +29,15 @@ final class Connection
 	 * @param array $arguments
 	 * @param string|null $types A string of types (default s - string, for every argument passed)
 	 * @return mysqli_result|false False on failure
+	 * @throws DatabaseObjectNotInitialized
 	 */
 	public static function query(string $query, array $arguments = [], ?string $types = null): mysqli_result|false
 	{
-		return (self::$wrapper !== null) ? self::$wrapper->query($query, $arguments, $types) : false;
+		if (self::$wrapper === null) {
+			throw new DatabaseObjectNotInitialized('MariaDB');
+		}
+
+		return self::$wrapper->query($query, $arguments, $types);
 	}
 
 	/**
