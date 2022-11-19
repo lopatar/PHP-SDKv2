@@ -25,7 +25,7 @@ abstract class Config
 	 * MySQL/MariDB DB configuration
 	 * @see Connection, App::initDatabaseConnection()
 	 */
-	const USE_MARIADB = true;
+	const USE_MARIADB = false;
 	const MARIADB_HOST = '';
 	const MARIADB_USERNAME = '';
 	const MARIADB_PASSWORD = '';
