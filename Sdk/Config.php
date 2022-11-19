@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Sdk;
 
-use App\Models\ShortenedLink;
 use Exception;
 use JetBrains\PhpStorm\Immutable;
 use Sdk\Database\MariaDB\Connection;
@@ -66,10 +65,4 @@ abstract class Config
 	 * @uses \Sdk\Utils\Encryption\AES, \Sdk\Middleware\Session
 	 */
 	const COOKIE_ENCRYPTION = false;
-
-	/**
-	 * How long the url code is, MIN = 2, MAX = 32
-	 * @see ShortenedLink::insert()
-	 */
-	const SHORTENED_URL_CODE_LENGTH = 8;
 }
