@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Sdk\Middleware;
 
-use App\Config;
+use Sdk\Config;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;

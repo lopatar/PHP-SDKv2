@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Sdk\Http;
 
-use App\Config;
 use Sdk\App;
+use Sdk\Config;
 use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\Url;

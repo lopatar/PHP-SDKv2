@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Sdk\Routing\Entities;
 
-use App\Config;
 use Exception;
 use Sdk\App;
+use Sdk\Config;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;

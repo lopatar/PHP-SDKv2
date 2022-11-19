@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Sdk\Middleware;
 
-use App\Config;
 use JetBrains\PhpStorm\Immutable;
+use Sdk\Config;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\Middleware\Interfaces\IMiddleware;

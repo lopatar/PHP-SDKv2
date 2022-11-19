@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Sdk;
 
-use App\Config;
 use Sdk\Database\MariaDB\Connection;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
