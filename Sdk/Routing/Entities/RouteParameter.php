@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Sdk\Routing\Entities;
 
-use PhpParser\Node\Param;
 use Sdk\Routing\ParamValidator;
 
 final class RouteParameter
@@ -63,6 +62,11 @@ final class RouteParameter
 		return (new ParamValidator($this))->validate($value);
 	}
 
+	public function getType(): RouteParameterType
+	{
+		return $this->type;
+	}
+
 	/**
 	 * Sets the parameter type, to validate for, STRING is default
 	 * @param RouteParameterType $type
@@ -72,11 +76,6 @@ final class RouteParameter
 	{
 		$this->type = $type;
 		return $this;
-	}
-
-	public function getType(): RouteParameterType
-	{
-		return $this->type;
 	}
 
 	/**
@@ -107,6 +106,11 @@ final class RouteParameter
 		return $this;
 	}
 
+	public function getMinLimit(): float|int|null
+	{
+		return $this->minLimit;
+	}
+
 	/**
 	 * Function that allows us to set minimum limit for the {@see RouteParameter::$value}
 	 *
@@ -129,9 +133,9 @@ final class RouteParameter
 		return $this;
 	}
 
-	public function getMinLimit(): float|int|null
+	public function getMaxLimit(): int|float|null
 	{
-		return $this->minLimit;
+		return $this->maxLimit;
 	}
 
 	/**
@@ -154,11 +158,6 @@ final class RouteParameter
 
 		$this->maxLimit = $maxLimit;
 		return $this;
-	}
-
-	public function getMaxLimit(): int|float|null
-	{
-		return $this->maxLimit;
 	}
 
 	public function getRoute(): Route

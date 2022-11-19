@@ -33,17 +33,6 @@ final class Router
 		return $this;
 	}
 
-	public function matchRoute(Request $request): ?Route
-	{
-		foreach ($this->routes as $route) {
-			if ($route->match($request)) {
-				return $route;
-			}
-		}
-
-		return null;
-	}
-
 	/**
 	 * Returns the existing {@see Route} object if it already exists within the {@see Router} object
 	 * @param Route $routeToCheck
@@ -61,6 +50,17 @@ final class Router
 
 			if ($existingRoute->name !== null && $existingRoute->name === $routeToCheck->name) {
 				return $existingRoute;
+			}
+		}
+
+		return null;
+	}
+
+	public function matchRoute(Request $request): ?Route
+	{
+		foreach ($this->routes as $route) {
+			if ($route->match($request)) {
+				return $route;
 			}
 		}
 

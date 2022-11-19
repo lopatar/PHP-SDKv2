@@ -5,7 +5,6 @@ namespace Sdk;
 
 use App\Config;
 use Sdk\Database\MariaDB\Connection;
-use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
@@ -22,19 +21,17 @@ use Sdk\Utils\Random;
 
 final class App
 {
+	public readonly Router $router;
 	private readonly Request $request;
 	private Response $response;
-
-	public readonly Router $router;
-
 	/**
 	 * @var IMiddleware[] $middleware
 	 */
 	private array $middleware = [];
 
-	public function __construct(private readonly Config $config)
+	public function __construct()
 	{
-		$this->request = new Request($this->config);
+		$this->request = new Request();
 		$this->response = new Response();
 		$this->router = new Router();
 
@@ -44,15 +41,15 @@ final class App
 
 	private function initDatabaseConnection(): void
 	{
-		if ($this->config::USE_MARIADB) {
-			Connection::init($this->config::MARIADB_HOST, $this->config::MARIADB_USERNAME, $this->config::MARIADB_PASSWORD, $this->config::MARIADB_DB_NAME);
+		if (Config::USE_MARIADB) {
+			Connection::init(Config::MARIADB_HOST, Config::MARIADB_USERNAME, Config::MARIADB_PASSWORD, Config::MARIADB_DB_NAME);
 		}
 	}
 
 	private function spoofServerHeader(): void
 	{
-		if ($this->config::SPOOF_SERVER_HEADER) {
-			$this->response->addHeader('Server', $this->config::SERVER_HEADER_VALUE);
+		if (Config::SPOOF_SERVER_HEADER) {
+			$this->response->addHeader('Server', Config::SERVER_HEADER_VALUE);
 		}
 	}
 
@@ -99,9 +96,7 @@ final class App
 	 */
 	private function initCookieEncryption(): void
 	{
-		Cookie::setConfig($this->config);
-
-		if ($this->config::COOKIE_ENCRYPTION) {
+		if (Config::COOKIE_ENCRYPTION) {
 			if (!Session::isStarted()) {
 				throw new SessionNotStarted('\\Sdk\\App');
 			}
@@ -130,9 +125,9 @@ final class App
 	/**
 	 * @throws RouteAlreadyExists
 	 */
-	public function get(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+	public function post(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
 	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::GET, $name);
+		return $this->route($requestPathFormat, $callback, RequestMethod::POST, $name);
 	}
 
 	/**
@@ -141,17 +136,9 @@ final class App
 	 */
 	public function route(string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, ?string $name = null): Route
 	{
-		$route = new Route($requestPathFormat, $this->config, $callback, $requestMethod, $name);
+		$route = new Route($requestPathFormat, $callback, $requestMethod, $name);
 		$this->router->addRoute($route);
 		return $route;
-	}
-
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function post(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::POST, $name);
 	}
 
 	/**
@@ -202,15 +189,23 @@ final class App
 	 * @return Route
 	 * @throws RouteAlreadyExists
 	 */
-    public function view(string $requestPathFormat, string|View $view, ?string $name = null): Route
-    {
-        return $this->get($requestPathFormat, function (Request $request, Response $response, array $args) use ($view): Response {
-            if ($view instanceof View) {
-                $response->setView($view);
-            } else {
-                $response->createView($view);
-            }
-            return $response;
-        }, $name);
-    }
+	public function view(string $requestPathFormat, string|View $view, ?string $name = null): Route
+	{
+		return $this->get($requestPathFormat, function (Request $request, Response $response, array $args) use ($view): Response {
+			if ($view instanceof View) {
+				$response->setView($view);
+			} else {
+				$response->createView($view);
+			}
+			return $response;
+		}, $name);
+	}
+
+	/**
+	 * @throws RouteAlreadyExists
+	 */
+	public function get(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+	{
+		return $this->route($requestPathFormat, $callback, RequestMethod::GET, $name);
+	}
 }

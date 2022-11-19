@@ -12,13 +12,11 @@ use Sdk\Middleware\Interfaces\IMiddleware;
 #[Immutable]
 final class Session implements IMiddleware
 {
-	public function __construct(private readonly Config $config) {}
-
-    /**
-     * Returns the value of session variable, set using {@see Session::set()}
-     * @param string $name
-     * @return string|float|int|array|null Null if not found
-     */
+	/**
+	 * Returns the value of session variable, set using {@see Session::set()}
+	 * @param string $name
+	 * @return string|float|int|array|null Null if not found
+	 */
 	public static function get(string $name): string|float|int|array|null
 	{
 		return $_SESSION[$name] ?? null;
@@ -34,12 +32,12 @@ final class Session implements IMiddleware
 		return isset($_SESSION[$name]);
 	}
 
-    /**
-     * Sets a session variable
-     * @param string $name
-     * @param string|float|int|array $value
-     * @return void
-     */
+	/**
+	 * Sets a session variable
+	 * @param string $name
+	 * @param string|float|int|array $value
+	 * @return void
+	 */
 	public static function set(string $name, string|float|int|array $value): void
 	{
 		if (self::isStarted()) {
@@ -60,14 +58,14 @@ final class Session implements IMiddleware
 	{
 		if (!self::isStarted()) {
 			session_start([
-				'name' => $this->config::SESSION_NAME,
-				'use_strict_mode' => $this->config::SESSION_STRICT_MODE,
-				'cookie_path' => $this->config::SESSION_COOKIE_PATH,
-				'cookie_lifetime' => $this->config::SESSION_LIFETIME,
-				'cookie_httponly' => $this->config::SESSION_COOKIE_HTTPONLY,
-				'cookie_samesite' => $this->config::SESSION_COOKIE_SAMESITE->value,
-				'sid_length' => $this->config::SESSION_ID_LENGTH,
-				'sid_bits_per_character' => $this->config::SESSION_ID_BITS_PER_CHAR,
+				'name' => Config::SESSION_NAME,
+				'use_strict_mode' => Config::SESSION_STRICT_MODE,
+				'cookie_path' => Config::SESSION_COOKIE_PATH,
+				'cookie_lifetime' => Config::SESSION_LIFETIME,
+				'cookie_httponly' => Config::SESSION_COOKIE_HTTPONLY,
+				'cookie_samesite' => Config::SESSION_COOKIE_SAMESITE->value,
+				'sid_length' => Config::SESSION_ID_LENGTH,
+				'sid_bits_per_character' => Config::SESSION_ID_BITS_PER_CHAR,
 				'cookie_secure' => $request->isHttps(),
 				'use_cookies' => true,
 				'use_only_cookies' => true,

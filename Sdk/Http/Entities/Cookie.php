@@ -12,8 +12,6 @@ use Sdk\Utils\Encryption\AES;
 
 final class Cookie
 {
-	private static ?Config $config = null;
-
 	public function __construct(public readonly string $name, public readonly string $value) {}
 
 	/**
@@ -60,7 +58,7 @@ final class Cookie
 	 */
 	public function create(Request $request, int $expires = 0, string $path = '/', string $domain = '', bool $httpOnly = true, CookieSameSite $sameSite = CookieSameSite::STRICT): self
 	{
-		$cookieValue = (self::$config::COOKIE_ENCRYPTION) ? AES::encryptString($this->value, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) : $this->value;
+		$cookieValue = (Config::COOKIE_ENCRYPTION) ? AES::encryptString($this->value, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) : $this->value;
 		setcookie($this->name, $cookieValue, [
 			'expires' => ($expires === 0) ? 0 : time() + $expires,
 			'path' => $path,
@@ -71,17 +69,6 @@ final class Cookie
 		]);
 
 		return $this;
-	}
-
-	/**
-	 * DO NOT USE, gets set in {@see App::initCookieEncryption()}
-	 * @param Config $config
-	 * @return void
-	 * @internal
-	 */
-	public static function setConfig(Config $config): void
-	{
-		self::$config = $config;
 	}
 
 	public function remove(): void

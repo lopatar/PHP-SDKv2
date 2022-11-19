@@ -9,13 +9,16 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 - Composer
 - Web server (routing all requests to public/index.php)
 
-
 # Installation
+
 To install the SDK, please run the following composer command
+
 ```shell
 composer create-project lopatar/php-sdkv2 <PROJECT-NAME>
 ```
+
 A folder called PROJECT-NAME will be created, please point your web server to /path/to/<PROJECT-NAME>/public/index.php
+
 # Routing requests to index.php
 
 - NGINX

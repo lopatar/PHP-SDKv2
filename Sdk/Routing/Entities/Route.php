@@ -46,7 +46,7 @@ final class Route
 	 * @param string $requestPathFormat Request path format the route should match (e. g. /home)
 	 * @param RequestMethod|RequestMethod[] $requestMethod Routes can have multiple request methods
 	 */
-	public function __construct(public readonly string $requestPathFormat, public readonly Config $config, callable|string $callback, RequestMethod|array $requestMethod, public readonly ?string $name = null)
+	public function __construct(public readonly string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, public readonly ?string $name = null)
 	{
 		$this->callback = (is_callable($callback)) ? $callback : $this->buildCallable($callback);
 		$this->requestPathFormatParts = explode('/', $this->requestPathFormat);
@@ -163,7 +163,7 @@ final class Route
 			$parametersArray[$routeParameter->formatIndex] = $paramValue;
 		}
 
-		return '/'. implode('/', $parametersArray); //static analysis complains about not being (probably) defined. However, all edge cases are covered (hope so, haha.)
+		return '/' . implode('/', $parametersArray); //static analysis complains about not being (probably) defined. However, all edge cases are covered (hope so, haha.)
 	}
 
 	/**
@@ -184,7 +184,7 @@ final class Route
 			return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
 		} catch (Exception $e) {
 			$response->setStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
-			$response->writeLine(($this->config::IS_PRODUCTION) ? 'Internal server error occurred, please try again later.' : $e->getMessage());
+			$response->writeLine((Config::IS_PRODUCTION) ? 'Internal server error occurred, please try again later.' : $e->getMessage());
 			return $response;
 		}
 	}

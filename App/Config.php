@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace App;
 
+use Exception;
 use JetBrains\PhpStorm\Immutable;
 use Sdk\App;
 use Sdk\Database\MariaDB\Connection;
 use Sdk\Http\Entities\CookieSameSite;
 use Sdk\Middleware\CSRF;
 use Sdk\Middleware\Session;
-use Exception;
 
 /**
  * Class that handles the {@see App} configuration
  */
 #[Immutable]
-final class Config
+abstract class Config
 {
 	/**
 	 * If false, we output {@see Exception::$message} thrown in {@see Route::execute()} to {@see Response::$text}

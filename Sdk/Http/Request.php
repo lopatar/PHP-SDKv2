@@ -42,7 +42,7 @@ final class Request
 	 */
 	private ?Route $route = null;
 
-	public function __construct(private readonly Config $config)
+	public function __construct()
 	{
 		$this->method = RequestMethod::from($this->getServer('REQUEST_METHOD'));
 		$this->protocol = $this->getServer('SERVER_PROTOCOL');
@@ -121,7 +121,7 @@ final class Request
 
 		$cookieValue = $_COOKIE[$name];
 		//only decrypt cookies if encryption is enabled & name differs from session cookie name
-		return ($this->config::COOKIE_ENCRYPTION && $this->config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
+		return (Config::COOKIE_ENCRYPTION && Config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $cookieValue) : new Cookie($name, $cookieValue);
 	}
 
 	public function hasCookie(string $name): bool
@@ -142,10 +142,19 @@ final class Request
 
 		foreach ($_COOKIE as $name => $value) {
 			//only decrypt cookies if encryption is enabled & name differs from session cookie name
-			$cookies[] = ($this->config::COOKIE_ENCRYPTION && $this->config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $value) : new Cookie($name, $value);
+			$cookies[] = (Config::COOKIE_ENCRYPTION && Config::SESSION_NAME !== $name) ? Cookie::fromEncrypted($name, $value) : new Cookie($name, $value);
 		}
 
 		return $cookies;
+	}
+
+	/**
+	 * Gets the route associated with the current {@see Request} object, will be null for {@see App} {@see IMiddleware middleware}
+	 * @return Route|null
+	 */
+	public function getRoute(): ?Route
+	{
+		return $this->route;
 	}
 
 	/**
@@ -158,15 +167,6 @@ final class Request
 	{
 		$this->route = $route;
 		return $this;
-	}
-
-	/**
-	 * Gets the route associated with the current {@see Request} object, will be null for {@see App} {@see IMiddleware middleware}
-	 * @return Route|null
-	 */
-	public function getRoute(): ?Route
-	{
-		return $this->route;
 	}
 
 	public function hasHeader(string $name): bool
