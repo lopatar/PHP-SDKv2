@@ -14,13 +14,26 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 To install the SDK, please run the following composer command
 
 ```shell
-composer require "lopatar/php-sdkv2" <PROJECT-NAME>
+composer require "lopatar/php-sdkv2"
 ```
 
-A folder called PROJECT-NAME will be created, please point your web server to /path/to/<PROJECT-NAME>/public/index.php
+- Create following directory structure in the folder where the "vendor" folder resides
+    - App
+        - Controllers (where your controller files reside)
+        - Views (where your view files reside)
+        - Models (where your model files reside)
 
+- Map the App namespace in composer.json like so
+```json
+  "autoload": {
+    "psr-4": {
+      "App\\": "App/"
+    }
+  }
+```
+
+- Done! (**TODO:** Skeleton project with those already installed!)
 # Routing requests to index.php
-
 - NGINX
 
 ```
