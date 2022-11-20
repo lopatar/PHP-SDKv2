@@ -11,8 +11,15 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
 # Installation
 
-To install the SDK, please run the following composer command
+To install the SDK, there are two ways.
 
+# Skeleton project
+To use the [skeleton project](https://github.com/lopatar/PHP-SDKv2-Skeleton) run the following composer command.
+```shell
+composer create-project lopatar/php-sdkv2-skeleton <PROJECT-NAME>
+```
+
+# Manual installation
 ```shell
 composer require "lopatar/php-sdkv2"
 ```
@@ -35,8 +42,7 @@ composer require "lopatar/php-sdkv2"
 
 - Create your configuration class
 
-- Done! (**TODO:** Skeleton project with those already installed!)
-
+- Done!
 # Routing requests to index.php
 
 - NGINX
