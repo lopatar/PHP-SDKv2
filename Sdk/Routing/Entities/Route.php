@@ -184,7 +184,8 @@ final class Route
 			return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
 		} catch (Exception $e) {
 			$response->setStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
-			$response->writeLine(($this->config->isProduction()) ? 'Internal server error occurred, please try again later.' : $e->getMessage());
+			$exceptionMessage = $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>" . $e->getFile() . "<br>" . $e->getLine();
+			$response->writeLine(($this->config->isProduction()) ? 'Internal server error occurred, please try again later.' : $exceptionMessage);
 			return $response;
 		}
 	}
