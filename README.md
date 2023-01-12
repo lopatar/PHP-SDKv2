@@ -92,6 +92,7 @@ final class Config implements \Sdk\IConfig
       across requests
     - [CSRF](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/CSRF.php) middleware, used to protect against
       CSRF attacks
+    - [HttpBasicAuth](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, used for basic HTTP auth, compares passwords hashed using [password_hash](https://www.php.net/password_hash)
 - Database connectors
     - [MySQL/MariaDB](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Database/MariaDB/Connection.php) connector,
       configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php) system
