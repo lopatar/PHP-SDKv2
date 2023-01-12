@@ -23,6 +23,7 @@ final class HttpBasicAuth implements Interfaces\IMiddleware
 		$credentialsHeader = $request->getHeader('Authorization');
 
 		if ($credentialsHeader === null) {
+
 			return $this->buildAuthenticationResponse($response);
 		}
 
