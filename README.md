@@ -106,7 +106,7 @@ final class Config implements \Sdk\IConfig
       for basic HTTP auth, compares passwords hashed using [password_hash](https://www.php.net/password_hash)
 - Database connectors
     - [MySQL/MariaDB](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Database/MariaDB/Connection.php) connector,
-      configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php) system
+      configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) system
 - [Utilities](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/) namespace
     - [Encryption](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption) namespace
         - [AES256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption/AES256.php) class
@@ -114,9 +114,9 @@ final class Config implements \Sdk\IConfig
           random **crypto safe** & non-safe values
     - [Hashing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Hashing) namespace
         - [Password hashing operation provider](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/PasswordProvider.php)
-- [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php) object
+- [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/CIonfig.php) object
     - Used for configuring database connectors, session, CSRF middleware, default password hashing provider
-    - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L134)
-    - [Server header spoofing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L120) feature, can be used
+    - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L134)
+    - [Server header spoofing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L120) feature, can be used
       to hide your web server software
-    - [Password hashing provider default options](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L136)
+    - [Password hashing provider default options](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L136)
