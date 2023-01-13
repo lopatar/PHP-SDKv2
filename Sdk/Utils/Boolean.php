@@ -2,6 +2,9 @@
 
 namespace Sdk\Utils;
 
+use JetBrains\PhpStorm\Immutable;
+
+#[Immutable]
 abstract class Boolean
 {
 	/**

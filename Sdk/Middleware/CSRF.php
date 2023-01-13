@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Sdk\Middleware;
 
+use JetBrains\PhpStorm\Immutable;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
@@ -13,6 +14,7 @@ use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Utils\Random;
 
+#[Immutable]
 final class CSRF implements IMiddleware
 {
 	private static IConfig $config;

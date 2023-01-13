@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Sdk\Utils;
 
 use Exception;
+use JetBrains\PhpStorm\Immutable;
 
+#[Immutable]
 abstract class Random
 {
 	/**

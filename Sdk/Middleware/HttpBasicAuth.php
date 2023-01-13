@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Sdk\Middleware;
 
+use JetBrains\PhpStorm\Immutable;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
@@ -10,6 +11,7 @@ use Sdk\Http\Response;
 /**
  * Middleware that allows for performing HTTP basic auth
  */
+#[Immutable]
 final class HttpBasicAuth implements Interfaces\IMiddleware
 {
 	/**
