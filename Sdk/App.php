@@ -102,7 +102,7 @@ final class App
 
 		if ($this->config->isCookieEncryptionEnabled()) {
 			if (!Session::isStarted()) {
-				(new Session($this->config))->execute($this->request, $this->response, []);
+				$this->addMiddleware(new Session($this->config));
 			}
 
 			if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
