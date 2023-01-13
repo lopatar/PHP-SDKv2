@@ -13,10 +13,14 @@ use Sdk\Http\Response;
 final class HttpBasicAuth implements Interfaces\IMiddleware
 {
 	/**
-	 * @param array<int, array{username: string, passwordHash: string}> $userCredentials User credentials in the annotation format, passwords are meant to be protected using {@see password_hash()}
+	 * @param array $userCredentials = [
+	 *    0 => ['username' => 'username', 'password' => 'passwordHash'],
+	 *    1 => ['username' => 'username2', 'password' => 'passwordHash2'],
+	 * ] User credentials in the annotation format, passwords are meant to be protected using {@see password_hash() or @see}
 	 * @param string $httpRealm
 	 */
-	public function __construct(private readonly array $userCredentials, private readonly string $httpRealm = 'Protected resource') {}
+	public function __construct(private readonly array $userCredentials, private readonly string $httpRealm = 'Protected resource') {
+    }
 
 	public function execute(Request $request, Response $response, array $args): Response
 	{

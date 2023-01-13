@@ -56,6 +56,9 @@ composer require "lopatar/php-sdkv2"
     }
 ```
 
+# Recommended plugins
+ - [deep-assoc-completion](https://plugins.jetbrains.com/plugin/9927-deep-assoc-completion) for better PhpDoc annotations
+
 # Configuration class
 
 The App object expects an instance of IConfig passed to the constructor, please create your class such as:
