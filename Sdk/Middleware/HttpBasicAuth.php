@@ -65,6 +65,13 @@ final class HttpBasicAuth implements Interfaces\IMiddleware
 		return $response;
 	}
 
+	private function buildAuthenticationResponse(Response $response): Response
+	{
+		$response->setStatusCode(StatusCode::UNAUTHORIZED);
+		$response->addHeader('WWW-Authenticate', "Basic realm=\"$this->httpRealm\"");
+		return $response;
+	}
+
 	/**
 	 * @param array<int, string> $userCredentials
 	 * @return bool
@@ -80,12 +87,5 @@ final class HttpBasicAuth implements Interfaces\IMiddleware
 		}
 
 		return false;
-	}
-
-	private function buildAuthenticationResponse(Response $response): Response
-	{
-		$response->setStatusCode(StatusCode::UNAUTHORIZED);
-		$response->addHeader('WWW-Authenticate', "Basic realm=\"$this->httpRealm\"");
-		return $response;
 	}
 }

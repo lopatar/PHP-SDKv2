@@ -14,12 +14,15 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 To install the SDK, there are two ways.
 
 # Skeleton project
+
 To use the [skeleton project](https://github.com/lopatar/PHP-SDKv2-Skeleton) run the following composer command.
+
 ```shell
 composer create-project lopatar/php-sdkv2-skeleton <PROJECT-NAME>
 ```
 
 # Manual installation
+
 ```shell
 composer require "lopatar/php-sdkv2"
 ```
@@ -45,6 +48,7 @@ composer require "lopatar/php-sdkv2"
 - Create your configuration class
 
 - Done!
+
 # Routing requests to index.php
 
 - NGINX
@@ -59,7 +63,8 @@ composer require "lopatar/php-sdkv2"
 ```
 
 # Recommended plugins
- - [deep-assoc-completion](https://plugins.jetbrains.com/plugin/9927-deep-assoc-completion) for better PhpDoc annotations
+
+- [deep-assoc-completion](https://plugins.jetbrains.com/plugin/9927-deep-assoc-completion) for better PhpDoc annotations
 
 # Configuration class
 
@@ -79,7 +84,7 @@ final class Config implements \Sdk\IConfig
     - [URL](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Http/Entities/Url.php) management
     - [Cookie](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Http/Entities/Cookie.php) management
         - Cookies can be automatically encrypted & decrypted
-          using [AES-256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L68)
+          using [AES-256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L134)
     - Headers, GET, POST, SERVER variables management
 - [Response](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Http/Response.php) object
     - [View](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Render/View.php) system (injecting PHP variables into
@@ -97,7 +102,8 @@ final class Config implements \Sdk\IConfig
       across requests
     - [CSRF](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/CSRF.php) middleware, used to protect against
       CSRF attacks
-    - [HttpBasicAuth](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, used for basic HTTP auth, compares passwords hashed using [password_hash](https://www.php.net/password_hash)
+    - [HttpBasicAuth](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, used
+      for basic HTTP auth, compares passwords hashed using [password_hash](https://www.php.net/password_hash)
 - Database connectors
     - [MySQL/MariaDB](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Database/MariaDB/Connection.php) connector,
       configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php) system
@@ -106,8 +112,11 @@ final class Config implements \Sdk\IConfig
         - [AES256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption/AES256.php) class
         - [Random](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Random.php) class, used for generating
           random **crypto safe** & non-safe values
+    - [Hashing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Hashing) namespace
+        - [Password hashing operation provider](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/PasswordProvider.php)
 - [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php) object
-    - Used for configuring database connectors, session & CSRF middleware
-    - Cookie encryption toggle
-    - [Server header spoofing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L61) feature, can be used
+    - Used for configuring database connectors, session, CSRF middleware, default password hashing provider
+    - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L134)
+    - [Server header spoofing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L120) feature, can be used
       to hide your web server software
+    - [Password hashing provider default options](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Config.php#L136)

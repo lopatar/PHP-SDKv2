@@ -17,6 +17,8 @@ use Sdk\Render\View;
 use Sdk\Routing\Entities\Route;
 use Sdk\Routing\Exceptions\RouteAlreadyExists;
 use Sdk\Routing\Router;
+use Sdk\Utils\Hashing\Exceptions\InvalidPasswordAlgorithm;
+use Sdk\Utils\Hashing\PasswordProvider;
 use Sdk\Utils\Random;
 
 final class App
@@ -29,14 +31,26 @@ final class App
 	 */
 	private array $middleware = [];
 
+	/**
+	 * @throws InvalidPasswordAlgorithm
+	 */
 	public function __construct(private readonly IConfig $config)
 	{
 		$this->request = new Request($this->config);
 		$this->response = new Response();
 		$this->router = new Router();
 
+		$this->initDefaultPasswordProvider();
 		$this->initDatabaseConnection();
 		$this->spoofServerHeader();
+	}
+
+	/**
+	 * @throws InvalidPasswordAlgorithm
+	 */
+	private function initDefaultPasswordProvider(): void
+	{
+		PasswordProvider::initDefaultProvider($this->config->getDefaultPasswordProviderHashAlgorithm(), $this->config->getDefaultPasswordProviderHashOptions());
 	}
 
 	private function initDatabaseConnection(): void
