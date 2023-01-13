@@ -132,7 +132,14 @@ interface IConfig
 	 * @uses \Sdk\Utils\Encryption\AES, \Sdk\Middleware\Session
 	 */
 	public function isCookieEncryptionEnabled(): bool;
+
+	/**
+	 * Default password hashing provider hash algorithm, {@see password_algos()}
+	 */
 	public function getDefaultPasswordProviderHashAlgorithm(): string;
 
+	/**
+	 * Default password hashing provider hash algorithm options
+	 */
 	public function getDefaultPasswordProviderHashOptions(): array;
 }
