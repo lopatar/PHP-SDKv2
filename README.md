@@ -33,10 +33,12 @@ composer require "lopatar/php-sdkv2"
 - Map the App namespace in composer.json like so
 
 ```json
+{
   "autoload": {
-"psr-4": {
-"App\\": "App/"
-}
+    "psr-4": {
+      "App\\": "App/"
+    }
+  }
 }
 ```
 
