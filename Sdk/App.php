@@ -10,7 +10,6 @@ use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\Middleware\Entities\SessionVariable;
-use Sdk\Middleware\Exceptions\SessionNotStarted;
 use Sdk\Middleware\Interfaces\IMiddleware;
 use Sdk\Middleware\Session;
 use Sdk\Render\View;
@@ -40,9 +39,10 @@ final class App
 		$this->response = new Response();
 		$this->router = new Router();
 
+		$this->initCookieEncryption();
 		$this->initDefaultPasswordProvider();
-		$this->initDatabaseConnection();
 		$this->spoofServerHeader();
+		$this->initDatabaseConnection();
 	}
 
 	/**
@@ -67,10 +67,6 @@ final class App
 		}
 	}
 
-	/**
-	 * Method that executes the application, matches routes, runs middleware and invokes the route methods
-	 * @throws SessionNotStarted
-	 */
 	public function run(): never
 	{
 		$this->runMiddleware();
@@ -86,9 +82,6 @@ final class App
 		$this->response->send();
 	}
 
-	/**
-	 * @throws SessionNotStarted
-	 */
 	private function runMiddleware(): void
 	{
 		foreach ($this->middleware as $middleware) {
@@ -97,16 +90,11 @@ final class App
 			if ($this->response->getStatusCode() !== StatusCode::OK) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
 				$this->response->send();
 			}
-
-			if ($middleware instanceof Session) {
-				$this->initCookieEncryption();
-			}
 		}
 	}
 
 	/**
-	 * Initializes the
-	 * @throws SessionNotStarted
+	 * Initializes the cookie encryption key
 	 */
 	private function initCookieEncryption(): void
 	{
@@ -114,7 +102,7 @@ final class App
 
 		if ($this->config->isCookieEncryptionEnabled()) {
 			if (!Session::isStarted()) {
-				throw new SessionNotStarted('\\Sdk\\App');
+				(new Session($this->config))->execute($this->request, $this->response, []);
 			}
 
 			if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
