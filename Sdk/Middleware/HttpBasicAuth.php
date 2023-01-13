@@ -13,14 +13,26 @@ use Sdk\Http\Response;
 final class HttpBasicAuth implements Interfaces\IMiddleware
 {
 	/**
+	 * @var array = [
+	 *    0 => ['username' => 'username', 'password' => 'passwordHash'],
+	 *    1 => ['username' => 'username2', 'password' => 'passwordHash2'],
+	 * ] User credentials in the annotation format, passwords are meant to be protected using {@see password_hash() or @see}
+	 */
+	private readonly array $userCredentials;
+
+	/**
 	 * @param array $userCredentials = [
 	 *    0 => ['username' => 'username', 'password' => 'passwordHash'],
 	 *    1 => ['username' => 'username2', 'password' => 'passwordHash2'],
 	 * ] User credentials in the annotation format, passwords are meant to be protected using {@see password_hash() or @see}
 	 * @param string $httpRealm
 	 */
-	public function __construct(private readonly array $userCredentials, private readonly string $httpRealm = 'Protected resource') {
-    }
+	public function __construct(array $userCredentials, private readonly string $httpRealm = 'Protected resource')
+	{
+		//$userCredentials not passed as readonly in constructor because deep-assoc-completion does not support that!
+		$this->userCredentials = $userCredentials;
+	}
+
 
 	public function execute(Request $request, Response $response, array $args): Response
 	{
