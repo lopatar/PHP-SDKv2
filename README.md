@@ -114,7 +114,7 @@ final class Config implements \Sdk\IConfig
           random **crypto safe** & non-safe values
     - [Hashing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Hashing) namespace
         - [Password hashing operation provider](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/PasswordProvider.php)
-- [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/CIonfig.php) object
+- [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) object
     - Used for configuring database connectors, session, CSRF middleware, default password hashing provider
     - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L134)
     - [Server header spoofing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L120) feature, can be used
