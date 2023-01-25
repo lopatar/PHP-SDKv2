@@ -17,82 +17,82 @@ use Sdk\Utils\Random;
 #[Immutable]
 final class CSRF implements IMiddleware
 {
-	private static IConfig $config;
+    private static IConfig $config;
 
-	public function __construct(IConfig $config)
-	{
-		self::$config = $config;
-	}
+    public function __construct(IConfig $config)
+    {
+        self::$config = $config;
+    }
 
-	/**
-	 * This function should be used for outputting the HTML form input element for sending the CSRF token to server side
-	 * @throws SessionNotStarted
-	 * @uses CSRF::getToken()
-	 */
-	public static function getInputField(): string
-	{
-		$token = self::getToken();
-		$inputName = SessionVariable::CSRF_TOKEN->value;
-		return "<input type=\"hidden\" name=\"$inputName\" value=\"$token\" required>";
-	}
+    /**
+     * This function should be used for outputting the HTML form input element for sending the CSRF token to server side
+     * @throws SessionNotStarted
+     * @uses CSRF::getToken()
+     */
+    public static function getInputField(): string
+    {
+        $token = self::getToken();
+        $inputName = SessionVariable::CSRF_TOKEN->value;
+        return "<input type=\"hidden\" name=\"$inputName\" value=\"$token\" required>";
+    }
 
-	/**
-	 * @throws SessionNotStarted
-	 */
-	private static function getToken(): string
-	{
-		if (!Session::isStarted()) {
-			throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
-		}
+    /**
+     * @throws SessionNotStarted
+     */
+    private static function getToken(): string
+    {
+        if (!Session::isStarted()) {
+            throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
+        }
 
-		if (self::isExpired()) {
-			return self::generateToken();
-		}
+        if (self::isExpired()) {
+            return self::generateToken();
+        }
 
-		return Session::get(SessionVariable::CSRF_TOKEN->value);
-	}
+        return Session::get(SessionVariable::CSRF_TOKEN->value);
+    }
 
-	private static function isExpired(): bool
-	{
-		$expires = Session::get(SessionVariable::CSRF_EXPIRES->value);
-		return $expires === null || time() > $expires;
-	}
+    private static function isExpired(): bool
+    {
+        $expires = Session::get(SessionVariable::CSRF_EXPIRES->value);
+        return $expires === null || time() > $expires;
+    }
 
-	private static function generateToken(): string
-	{
-		$token = Random::stringSafe(48);
-		Session::set(SessionVariable::CSRF_TOKEN->value, $token);
-		Session::set(SessionVariable::CSRF_EXPIRES->value, time() + self::$config->getCsrfTokenLifetime());
-		return $token;
-	}
+    private static function generateToken(): string
+    {
+        $token = Random::stringSafe(48);
+        Session::set(SessionVariable::CSRF_TOKEN->value, $token);
+        Session::set(SessionVariable::CSRF_EXPIRES->value, time() + self::$config->getCsrfTokenLifetime());
+        return $token;
+    }
 
-	/**
-	 * This function is responsible for validating the POSTed token
-	 * @throws SessionNotStarted
-	 * @uses Session::isStarted(), Request::getPost(), CSRF::generateToken(), CSRF::isValid()
-	 */
-	public function execute(Request $request, Response $response, array $args): Response
-	{
-		if (!Session::isStarted()) {
-			throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
-		}
+    /**
+     * This function is responsible for validating the POSTed token
+     * @throws SessionNotStarted
+     * @uses Session::isStarted(), Request::getPost(), CSRF::generateToken(), CSRF::isValid()
+     */
+    public function execute(Request $request, Response $response, array $args): Response
+    {
+        if (!Session::isStarted()) {
+            throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
+        }
 
-		$token = ($request->method === RequestMethod::POST) ? $request->getPost(SessionVariable::CSRF_TOKEN->value) : $request->getHeader(SessionVariable::CSRF_TOKEN->value);
+        $token = ($request->method === RequestMethod::POST) ? $request->getPost(SessionVariable::CSRF_TOKEN->value) : $request->getHeader(SessionVariable::CSRF_TOKEN->value);
 
-		if (!$this->isValid($token)) {
-			$response->setStatusCode(StatusCode::FORBIDDEN);
-		} else {
-			self::generateToken(); //generate another token after it was verified
-		}
+        if (!$this->isValid($token)) {
+            $response->setStatusCode(StatusCode::FORBIDDEN);
+        } else {
+            self::generateToken(); //generate another token after it was verified
+        }
 
-		return $response;
-	}
+        return $response;
+    }
 
-	/**
-	 * @throws SessionNotStarted
-	 */
-	private function isValid(string|null $token): bool
-	{
-		return self::getToken() === $token;
-	}
+    /**
+     * @throws SessionNotStarted
+     */
+    private function isValid(string|null $token): bool
+    {
+        return self::getToken() === $token;
+    }
 }

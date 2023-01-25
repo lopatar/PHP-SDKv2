@@ -9,77 +9,77 @@ use Sdk\Routing\Exceptions\RouteAlreadyExists;
 
 /**
  * Object that is responsible for managing routes
- * @uses \Sdk\Routing\Entities\Route
+ * @uses Route
  */
 final class Router
 {
-	/**
-	 * @var Route[]
-	 */
-	private array $routes = [];
+    /**
+     * @var Route[]
+     */
+    private array $routes = [];
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function addRoute(Route $route): self
-	{
-		$existingRoute = $this->routeExists($route);
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function addRoute(Route $route): self
+    {
+        $existingRoute = $this->routeExists($route);
 
-		if ($existingRoute !== null) {
-			throw new RouteAlreadyExists($route, $existingRoute);
-		}
+        if ($existingRoute !== null) {
+            throw new RouteAlreadyExists($route, $existingRoute);
+        }
 
-		$this->routes[] = $route;
-		return $this;
-	}
+        $this->routes[] = $route;
+        return $this;
+    }
 
-	/**
-	 * Returns the existing {@see Route} object if it already exists within the {@see Router} object
-	 * @param Route $routeToCheck
-	 * @return Route|null
-	 */
-	public function routeExists(Route $routeToCheck): ?Route
-	{
-		foreach ($this->routes as $existingRoute) {
-			if ($existingRoute->requestPathFormat === $routeToCheck->requestPathFormat) {
-				//the == operator is used intentionally, we want equality not identity
-				if ($existingRoute->requestMethod == $routeToCheck->requestMethod) {
-					return $existingRoute;
-				}
-			}
+    /**
+     * Returns the existing {@see Route} object if it already exists within the {@see Router} object
+     * @param Route $routeToCheck
+     * @return Route|null
+     */
+    public function routeExists(Route $routeToCheck): ?Route
+    {
+        foreach ($this->routes as $existingRoute) {
+            if ($existingRoute->requestPathFormat === $routeToCheck->requestPathFormat) {
+                //the == operator is used intentionally, we want equality not identity
+                if ($existingRoute->requestMethod == $routeToCheck->requestMethod) {
+                    return $existingRoute;
+                }
+            }
 
-			if ($existingRoute->name !== null && $existingRoute->name === $routeToCheck->name) {
-				return $existingRoute;
-			}
-		}
+            if ($existingRoute->name !== null && $existingRoute->name === $routeToCheck->name) {
+                return $existingRoute;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public function matchRoute(Request $request): ?Route
-	{
-		foreach ($this->routes as $route) {
-			if ($route->match($request)) {
-				return $route;
-			}
-		}
+    public function matchRoute(Request $request): ?Route
+    {
+        foreach ($this->routes as $route) {
+            if ($route->match($request)) {
+                return $route;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Gets route by its {@see Route::$name}
-	 * @param string $name
-	 * @return Route|null
-	 */
-	public function getRoute(string $name): ?Route
-	{
-		foreach ($this->routes as $route) {
-			if ($route->name === $name) {
-				return $route;
-			}
-		}
+    /**
+     * Gets route by its {@see Route::$name}
+     * @param string $name
+     * @return Route|null
+     */
+    public function getRoute(string $name): ?Route
+    {
+        foreach ($this->routes as $route) {
+            if ($route->name === $name) {
+                return $route;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

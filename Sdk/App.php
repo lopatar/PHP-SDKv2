@@ -22,194 +22,194 @@ use Sdk\Utils\Random;
 
 final class App
 {
-	public readonly Router $router;
-	private readonly Request $request;
-	private Response $response;
-	/**
-	 * @var IMiddleware[] $middleware
-	 */
-	private array $middleware = [];
+    public readonly Router $router;
+    private readonly Request $request;
+    private Response $response;
+    /**
+     * @var IMiddleware[] $middleware
+     */
+    private array $middleware = [];
 
-	/**
-	 * @throws InvalidPasswordAlgorithm
-	 */
-	public function __construct(private readonly IConfig $config)
-	{
-		$this->request = new Request($this->config);
-		$this->response = new Response();
-		$this->router = new Router();
+    /**
+     * @throws InvalidPasswordAlgorithm
+     */
+    public function __construct(private readonly IConfig $config)
+    {
+        $this->request = new Request($this->config);
+        $this->response = new Response();
+        $this->router = new Router();
 
-		$this->initCookieEncryption();
-		$this->initDefaultPasswordProvider();
-		$this->spoofServerHeader();
-		$this->initDatabaseConnection();
-	}
+        $this->initCookieEncryption();
+        $this->initDefaultPasswordProvider();
+        $this->spoofServerHeader();
+        $this->initDatabaseConnection();
+    }
 
-	/**
-	 * @throws InvalidPasswordAlgorithm
-	 */
-	private function initDefaultPasswordProvider(): void
-	{
-		PasswordProvider::initDefaultProvider($this->config->getDefaultPasswordProviderHashAlgorithm(), $this->config->getDefaultPasswordProviderHashOptions());
-	}
+    /**
+     * Initializes the cookie encryption key
+     */
+    private function initCookieEncryption(): void
+    {
+        Cookie::setConfig($this->config);
 
-	private function initDatabaseConnection(): void
-	{
-		if ($this->config->isMariaDbEnabled()) {
-			Connection::init($this->config->getMariaDbHost(), $this->config->getMariaDbUsername(), $this->config->getMariaDbPassword(), $this->config->getMariaDbDatabaseName());
-		}
-	}
+        if ($this->config->isCookieEncryptionEnabled()) {
+            if (!Session::isStarted()) {
+                $this->addMiddleware(new Session($this->config));
+            }
 
-	private function spoofServerHeader(): void
-	{
-		if ($this->config->isSpoofedServerHeadEnabled()) {
-			$this->response->addHeader('Server', $this->config->getSpoofedServerValue());
-		}
-	}
+            if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
+                Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
+            }
+        }
+    }
 
-	public function run(): never
-	{
-		$this->runMiddleware();
-		$matchedRoute = $this->router->matchRoute($this->request);
+    public function addMiddleware(IMiddleware $middleware): self
+    {
+        $this->middleware[] = $middleware;
+        return $this;
+    }
 
-		if ($matchedRoute !== null) {
-			$this->request->setRoute($matchedRoute);
-			$this->response = $matchedRoute->execute($this->request, $this->response);
-		} else {
-			$this->response->setStatusCode(StatusCode::NOT_FOUND);
-		}
+    /**
+     * @throws InvalidPasswordAlgorithm
+     */
+    private function initDefaultPasswordProvider(): void
+    {
+        PasswordProvider::initDefaultProvider($this->config->getDefaultPasswordProviderHashAlgorithm(), $this->config->getDefaultPasswordProviderHashOptions());
+    }
 
-		$this->response->send();
-	}
+    private function spoofServerHeader(): void
+    {
+        if ($this->config->isSpoofedServerHeadEnabled()) {
+            $this->response->addHeader('Server', $this->config->getSpoofedServerValue());
+        }
+    }
 
-	private function runMiddleware(): void
-	{
-		foreach ($this->middleware as $middleware) {
-			$this->response = $middleware->execute($this->request, $this->response, []);
+    private function initDatabaseConnection(): void
+    {
+        if ($this->config->isMariaDbEnabled()) {
+            Connection::init($this->config->getMariaDbHost(), $this->config->getMariaDbUsername(), $this->config->getMariaDbPassword(), $this->config->getMariaDbDatabaseName());
+        }
+    }
 
-			if ($this->response->getStatusCode() !== StatusCode::OK) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
-				$this->response->send();
-			}
-		}
-	}
+    public function run(): never
+    {
+        $this->runMiddleware();
+        $matchedRoute = $this->router->matchRoute($this->request);
 
-	/**
-	 * Initializes the cookie encryption key
-	 */
-	private function initCookieEncryption(): void
-	{
-		Cookie::setConfig($this->config);
+        if ($matchedRoute !== null) {
+            $this->request->setRoute($matchedRoute);
+            $this->response = $matchedRoute->execute($this->request, $this->response);
+        } else {
+            $this->response->setStatusCode(StatusCode::NOT_FOUND);
+        }
 
-		if ($this->config->isCookieEncryptionEnabled()) {
-			if (!Session::isStarted()) {
-				$this->addMiddleware(new Session($this->config));
-			}
+        $this->response->send();
+    }
 
-			if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
-				Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
-			}
-		}
-	}
+    private function runMiddleware(): void
+    {
+        foreach ($this->middleware as $middleware) {
+            $this->response = $middleware->execute($this->request, $this->response, []);
 
-	public function addMiddleware(IMiddleware $middleware): self
-	{
-		$this->middleware[] = $middleware;
-		return $this;
-	}
+            if ($this->response->getStatusCode() !== StatusCode::OK) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
+                $this->response->send();
+            }
+        }
+    }
 
-	/**
-	 * @param IMiddleware[] $middleware
-	 */
-	public function addMiddlewareBulk(array $middleware): self
-	{
-		$this->middleware = array_merge($this->middleware, $middleware);
-		return $this;
-	}
+    /**
+     * @param IMiddleware[] $middleware
+     */
+    public function addMiddlewareBulk(array $middleware): self
+    {
+        $this->middleware = array_merge($this->middleware, $middleware);
+        return $this;
+    }
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function post(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::POST, $name);
-	}
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function post(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+    {
+        return $this->route($requestPathFormat, $callback, RequestMethod::POST, $name);
+    }
 
-	/**
-	 * @param RequestMethod|RequestMethod[] $requestMethod
-	 * @throws RouteAlreadyExists
-	 */
-	public function route(string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, ?string $name = null): Route
-	{
-		$route = new Route($requestPathFormat, $this->config, $callback, $requestMethod, $name);
-		$this->router->addRoute($route);
-		return $route;
-	}
+    /**
+     * @param RequestMethod|RequestMethod[] $requestMethod
+     * @throws RouteAlreadyExists
+     */
+    public function route(string $requestPathFormat, callable|string $callback, RequestMethod|array $requestMethod, ?string $name = null): Route
+    {
+        $route = new Route($requestPathFormat, $this->config, $callback, $requestMethod, $name);
+        $this->router->addRoute($route);
+        return $route;
+    }
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function put(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::PUT, $name);
-	}
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function put(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+    {
+        return $this->route($requestPathFormat, $callback, RequestMethod::PUT, $name);
+    }
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function delete(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::DELETE, $name);
-	}
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function delete(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+    {
+        return $this->route($requestPathFormat, $callback, RequestMethod::DELETE, $name);
+    }
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function options(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::OPTIONS, $name);
-	}
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function options(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+    {
+        return $this->route($requestPathFormat, $callback, RequestMethod::OPTIONS, $name);
+    }
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function patch(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::PATCH, $name);
-	}
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function patch(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+    {
+        return $this->route($requestPathFormat, $callback, RequestMethod::PATCH, $name);
+    }
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function any(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::cases(), $name);
-	}
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function any(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+    {
+        return $this->route($requestPathFormat, $callback, RequestMethod::cases(), $name);
+    }
 
-	/**
-	 * Function that allows us to create GET routes that directly render a {@see View} object, no need to define a controller
-	 * @param string $requestPathFormat
-	 * @param string|View $view Either a {@see View} object or fileName
-	 * @param string|null $name
-	 * @return Route
-	 * @throws RouteAlreadyExists
-	 */
-	public function view(string $requestPathFormat, string|View $view, ?string $name = null): Route
-	{
-		return $this->get($requestPathFormat, function (Request $request, Response $response, array $args) use ($view): Response {
-			if ($view instanceof View) {
-				$response->setView($view);
-			} else {
-				$response->createView($view);
-			}
-			return $response;
-		}, $name);
-	}
+    /**
+     * Function that allows us to create GET routes that directly render a {@see View} object, no need to define a controller
+     * @param string $requestPathFormat
+     * @param string|View $view Either a {@see View} object or fileName
+     * @param string|null $name
+     * @return Route
+     * @throws RouteAlreadyExists
+     */
+    public function view(string $requestPathFormat, string|View $view, ?string $name = null): Route
+    {
+        return $this->get($requestPathFormat, function (Request $request, Response $response, array $args) use ($view): Response {
+            if ($view instanceof View) {
+                $response->setView($view);
+            } else {
+                $response->createView($view);
+            }
+            return $response;
+        }, $name);
+    }
 
-	/**
-	 * @throws RouteAlreadyExists
-	 */
-	public function get(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
-	{
-		return $this->route($requestPathFormat, $callback, RequestMethod::GET, $name);
-	}
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function get(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
+    {
+        return $this->route($requestPathFormat, $callback, RequestMethod::GET, $name);
+    }
 }

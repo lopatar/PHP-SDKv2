@@ -8,5 +8,5 @@ use Sdk\Http\Response;
 
 interface IMiddleware
 {
-	public function execute(Request $request, Response $response, array $args): Response;
+    public function execute(Request $request, Response $response, array $args): Response;
 }
