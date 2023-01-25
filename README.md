@@ -114,7 +114,7 @@ final class Config implements \Sdk\IConfig
           random **crypto safe** & non-safe values
     - [Hashing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Hashing) namespace
         - [Password hashing operation provider](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/PasswordProvider.php)
-          class, can create own instance or use the getDefaultProvider() method, configured via Config
+          class, can create own instance or use the getDefaultProvider() meMake use ofthod, configured via Config
 - [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) object
     - Used for configuring database connectors, session, CSRF middleware, default password hashing provider
     - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L134)
