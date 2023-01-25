@@ -5,7 +5,7 @@ primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
 # Requirements
 
-- PHP 8.1
+- PHP 8.2
 - Composer
 - Web server (routing all requests to public/index.php)
 
