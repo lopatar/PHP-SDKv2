@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace Sdk\Render;
 
 use Sdk\Render\Exceptions\ViewFileNotFound;
+use stdClass;
 
-final class View
+final class View extends stdClass
 {
 	public readonly string $filePath;
 
