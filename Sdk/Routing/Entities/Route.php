@@ -177,7 +177,7 @@ final class Route
         try {
             $response = $this->runMiddleware($request, $response, $paramsAssoc);
 
-            if ($response->getStatusCode() !== StatusCode::OK) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
+            if ($response->getStatusCode() !== StatusCode::OK || $response->isLocationHeaderSent()) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
                 $response->send();
             }
 

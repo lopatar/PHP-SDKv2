@@ -18,6 +18,17 @@ final class Response
         return $this->statusCode;
     }
 
+    public function isLocationHeaderSent(): bool
+    {
+        foreach (headers_list() as $headerSent) {
+            if (str_contains($headerSent, 'Location:')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function setStatusCode(StatusCode $statusCode): self
     {
         $this->statusCode = $statusCode;
