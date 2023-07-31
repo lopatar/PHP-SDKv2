@@ -111,7 +111,7 @@ final class App
         foreach ($this->middleware as $middleware) {
             $this->response = $middleware->execute($this->request, $this->response, []);
 
-            if ($this->response->getStatusCode() !== StatusCode::OK) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
+            if ($this->response->getStatusCode() !== StatusCode::OK || $this->response->isLocationHeaderSent()) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
                 $this->response->send();
             }
         }
