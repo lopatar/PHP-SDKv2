@@ -24,4 +24,14 @@ abstract class Boolean
 
         return null;
     }
+
+    /**
+     * This function turns a bool value into a string
+     * @param bool $value
+     * @return string
+     */
+    public static function toString(bool $value): string
+    {
+        return ($value) ? 'true' : 'false';
+    }
 }

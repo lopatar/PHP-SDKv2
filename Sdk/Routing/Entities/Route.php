@@ -176,11 +176,6 @@ final class Route
         $paramsAssoc = $this->parameters->getAssoc();
         try {
             $response = $this->runMiddleware($request, $response, $paramsAssoc);
-
-            if ($response->getStatusCode() !== StatusCode::OK || $response->isLocationHeaderSent()) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
-                $response->send();
-            }
-
             return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
         } catch (Exception $e) {
             $response->setStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
@@ -194,6 +189,10 @@ final class Route
     {
         foreach ($this->middleware as $middleware) {
             $response = $middleware->execute($request, $response, $args);
+
+            if ($response->getStatusCode() !== StatusCode::OK || $response->isLocationHeaderSent()) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
+                $response->send();
+            }
         }
 
         return $response;
