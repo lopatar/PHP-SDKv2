@@ -110,11 +110,13 @@ final class Config implements \Sdk\IConfig
 - [Utilities](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/) namespace
     - [Encryption](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption) namespace
         - [AES256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption/AES256.php) class
-        - [Random](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Random.php) class, used for generating
-          random **crypto safe** & non-safe values
     - [Hashing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Hashing) namespace
         - [Password hashing operation provider](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/PasswordProvider.php)
-          class, can create own instance or use the getDefaultProvider() meMake use ofthod, configured via Config
+          class, can create own instance or use the getDefaultProvider() method, configured via Config
+    - [Random](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Random.php) class, used for generating
+      random **crypto safe** & non-safe values
+    - [Math](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Math.php) class, containing simple math utilities not contained in PHP
+    - [Boolean](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Boolean.php) class, containing simple methods for working with bools
 - [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) object
     - Used for configuring database connectors, session, CSRF middleware, default password hashing provider
     - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L134)
