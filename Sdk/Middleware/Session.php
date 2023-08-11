@@ -4,16 +4,20 @@ declare(strict_types=1);
 namespace Sdk\Middleware;
 
 use JetBrains\PhpStorm\Immutable;
+use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\IConfig;
 use Sdk\Middleware\Interfaces\IMiddleware;
 
 #[Immutable]
-final readonly class Session implements IMiddleware
+final  class Session implements IMiddleware
 {
-    public function __construct(private IConfig $config)
+    private static ?IConfig $_config = null;
+
+    public function __construct(private readonly IConfig $config)
     {
+        self::$_config = $this->config;
     }
 
     /**
@@ -50,12 +54,48 @@ final readonly class Session implements IMiddleware
     }
 
     /**
+     * Removes the variable from the session array
+     * @param string $name
+     * @return void
+     */
+    public static function remove(string $name): void
+    {
+        if (self::isStarted() && self::exists($name)) {
+            unset($_SESSION[$name]);
+        }
+    }
+
+    /**
      * Returns whether a session has been started
      * @return bool
      */
     public static function isStarted(): bool
     {
         return isset($_SESSION);
+    }
+
+    /**
+     * Ends the current session, removes all data and deletes the cookie
+     * @return void
+     */
+    public static function end(): void
+    {
+        if (self::isStarted()) {
+            session_destroy();
+
+            if (self::$_config !== null) {
+                (new Cookie(self::$_config->getSessionName(), 'destroy'))->remove();
+            }
+        }
+    }
+
+    /**
+     * Clears all session data, session is still active
+     * @return void
+     */
+    public static function clear(): void
+    {
+        session_unset();
     }
 
     public function execute(Request $request, Response $response, array $args): Response
@@ -74,9 +114,10 @@ final readonly class Session implements IMiddleware
                 'use_cookies' => true,
                 'use_only_cookies' => true,
             ]);
+        } else {
+            session_regenerate_id(); //regenerate ID on each request, makes session stealing attacks nearly impossible
         }
 
-        session_regenerate_id(); //regenerate ID on each request, makes session stealing attacks nearly impossible
         return $response;
     }
 }
