@@ -21,6 +21,7 @@
     "php": ">=8.2",
     "ext-mysqli": "*",
     "ext-openssl": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-mbstring": "*"
   }
 }
