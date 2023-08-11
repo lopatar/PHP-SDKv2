@@ -53,6 +53,15 @@ final class Response
         return $this;
     }
 
+    /**
+     * @see https://php.net/header_remove
+     */
+    public function wipeHeaders(): self
+    {
+        header_remove();
+        return $this;
+    }
+
     public function write(string $text): self
     {
         $this->text .= $text;
