@@ -49,6 +49,6 @@ final class Stack implements Interfaces\IStack
 
     public function isFull(): bool
     {
-        return $this->topIndex === $this->size;
+        return $this->topIndex === $this->size - 1;
     }
 }
