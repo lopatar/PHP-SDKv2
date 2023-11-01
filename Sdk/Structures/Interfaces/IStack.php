@@ -8,4 +8,5 @@ interface IStack
     public function pop(): mixed;
     public function isEmpty(): bool;
     public function isFull(): bool;
+    public function reverse(): void;
 }

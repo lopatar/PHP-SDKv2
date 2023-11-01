@@ -42,6 +42,11 @@ final class Stack implements Interfaces\IStack
         return $value;
     }
 
+    public function reverse(): void
+    {
+        $this->values = array_reverse($this->values);
+    }
+
     public function isEmpty(): bool
     {
          return $this->topIndex < 0;
