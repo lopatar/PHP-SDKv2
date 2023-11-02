@@ -1,7 +1,8 @@
 <?php
 
 namespace Sdk\Structures\Interfaces;
-interface IStack
+
+interface IQueue
 {
     public function __construct(int $size);
 
@@ -9,9 +10,12 @@ interface IStack
 
     public function pop(): mixed;
 
+    public function getFirst(): mixed;
+
+    public function getLast(): mixed;
+
     public function isEmpty(): bool;
 
     public function isFull(): bool;
-
-    public function reverse(): void;
+    public function reset(): void;
 }

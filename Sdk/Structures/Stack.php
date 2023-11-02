@@ -2,12 +2,12 @@
 
 namespace Sdk\Structures;
 
-use Sdk\Structures\Exceptions\StackOverflow;
-use Sdk\Structures\Exceptions\StackUnderflow;
+use Sdk\Structures\Exceptions\StructureOverflow;
+use Sdk\Structures\Exceptions\StructureUnderflow;
 
 final class Stack implements Interfaces\IStack
 {
-    private array $values;
+    private array $values = [];
     private int $topIndex = -1;
 
     public function __construct(public readonly int $size)
@@ -15,25 +15,30 @@ final class Stack implements Interfaces\IStack
     }
 
     /**
-     * @throws StackOverflow
+     * @throws StructureUnderflow
      */
     public function push(mixed $value): void
     {
         if ($this->isFull()) {
-            throw new StackOverflow();
+            throw new StructureUnderflow('Stack');
         }
 
         $this->topIndex++;
         $this->values[$this->topIndex] = $value;
     }
 
+    public function isFull(): bool
+    {
+        return $this->topIndex === $this->size - 1;
+    }
+
     /**
-     * @throws StackUnderflow
+     * @throws StructureOverflow
      */
     public function pop(): mixed
     {
         if ($this->isEmpty()) {
-            throw new StackUnderflow();
+            throw new StructureOverflow('Stack');
         }
 
         $value = $this->values[$this->topIndex];
@@ -42,18 +47,13 @@ final class Stack implements Interfaces\IStack
         return $value;
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->topIndex < 0;
+    }
+
     public function reverse(): void
     {
         $this->values = array_reverse($this->values);
-    }
-
-    public function isEmpty(): bool
-    {
-         return $this->topIndex < 0;
-    }
-
-    public function isFull(): bool
-    {
-        return $this->topIndex === $this->size - 1;
     }
 }

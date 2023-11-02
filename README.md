@@ -115,9 +115,15 @@ final class Config implements \Sdk\IConfig
           class, can create own instance or use the getDefaultProvider() method, configured via Config
     - [Random](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Random.php) class, used for generating
       random **crypto safe** & non-safe values
-    - [Math](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Math.php) class, containing simple math utilities not contained in PHP
-    - [Boolean](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Boolean.php) class, containing simple methods for working with booleans
-    - [Strings](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Strings.php) class, containing simple methods for manipulating strings, detecting encoding etc.
+    - [Math](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Math.php) class, containing simple math utilities
+      not contained in PHP
+    - [Boolean](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Boolean.php) class, containing simple methods
+      for working with booleans
+    - [Strings](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Strings.php) class, containing simple methods
+      for manipulating strings, detecting encoding etc.
+- [Structures](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/) namespace
+    - [Stack](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/Stack.php) Fixed size stack implementation allowing mixed data type values
+    - [Queue](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/Queue.php) Fixed size queue implementation allowing mixed data type values
 - [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) object
     - Used for configuring database connectors, session, CSRF middleware, default password hashing provider
     - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L134)

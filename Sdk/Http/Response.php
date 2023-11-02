@@ -18,6 +18,12 @@ final class Response
         return $this->statusCode;
     }
 
+    public function setStatusCode(StatusCode $statusCode): self
+    {
+        $this->statusCode = $statusCode;
+        return $this;
+    }
+
     public function isLocationHeaderSent(): bool
     {
         foreach (headers_list() as $headerSent) {
@@ -27,12 +33,6 @@ final class Response
         }
 
         return false;
-    }
-
-    public function setStatusCode(StatusCode $statusCode): self
-    {
-        $this->statusCode = $statusCode;
-        return $this;
     }
 
     /**

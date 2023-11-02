@@ -183,7 +183,7 @@ final class Request
     }
 
     /**
-     * @see Request::isHttp3()
+     * @see          Request::isHttp3()
      * Is an alias of Request::isHttp3()
      * @noinspection SpellCheckingInspection
      */

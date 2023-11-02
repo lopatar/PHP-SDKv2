@@ -63,12 +63,6 @@ final class App
         }
     }
 
-    public function addMiddleware(IMiddleware $middleware): self
-    {
-        $this->middleware[] = $middleware;
-        return $this;
-    }
-
     /**
      * @throws InvalidPasswordAlgorithm
      */
@@ -89,6 +83,12 @@ final class App
         if ($this->config->isMariaDbEnabled()) {
             Connection::init($this->config->getMariaDbHost(), $this->config->getMariaDbUsername(), $this->config->getMariaDbPassword(), $this->config->getMariaDbDatabaseName());
         }
+    }
+
+    public function addMiddleware(IMiddleware $middleware): self
+    {
+        $this->middleware[] = $middleware;
+        return $this;
     }
 
     public function run(): never

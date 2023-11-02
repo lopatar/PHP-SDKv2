@@ -31,16 +31,6 @@ final  class Session implements IMiddleware
     }
 
     /**
-     * Returns whether the session variable exists
-     * @param string $name
-     * @return bool
-     */
-    public static function exists(string $name): bool
-    {
-        return isset($_SESSION[$name]);
-    }
-
-    /**
      * Sets a session variable
      * @param string $name
      * @param string|float|int|array $value
@@ -50,18 +40,6 @@ final  class Session implements IMiddleware
     {
         if (self::isStarted()) {
             $_SESSION[$name] = $value;
-        }
-    }
-
-    /**
-     * Removes the variable from the session array
-     * @param string $name
-     * @return void
-     */
-    public static function remove(string $name): void
-    {
-        if (self::isStarted() && self::exists($name)) {
-            unset($_SESSION[$name]);
         }
     }
 
@@ -87,6 +65,28 @@ final  class Session implements IMiddleware
                 (new Cookie(self::$_config->getSessionName(), 'destroy'))->remove();
             }
         }
+    }
+
+    /**
+     * Removes the variable from the session array
+     * @param string $name
+     * @return void
+     */
+    public static function remove(string $name): void
+    {
+        if (self::isStarted() && self::exists($name)) {
+            unset($_SESSION[$name]);
+        }
+    }
+
+    /**
+     * Returns whether the session variable exists
+     * @param string $name
+     * @return bool
+     */
+    public static function exists(string $name): bool
+    {
+        return isset($_SESSION[$name]);
     }
 
     /**
