@@ -31,7 +31,7 @@ final class Queue implements Interfaces\IQueue
 
     public function isFull(): bool
     {
-        return $this->lastIndex === $this->size - 1;
+        return $this->lastIndex === $this->size;
     }
 
     /**
