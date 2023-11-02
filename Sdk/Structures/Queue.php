@@ -45,6 +45,11 @@ final class Queue implements Interfaces\IQueue
 
         $value = $this->values[$this->firstIndex];
         $this->firstIndex++;
+
+        if ($this->firstIndex === $this->size - 1) {
+            $this->reset();
+        }
+
         return $value;
     }
 
