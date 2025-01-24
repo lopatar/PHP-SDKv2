@@ -111,7 +111,7 @@ final class Config implements \Sdk\IConfig
       configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) system
 - [Utilities](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/) namespace
     - [Encryption](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption) namespace
-        - [AES256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption/AES256.php) class
+        - [AES256-CBC](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Encryption/AES.php) class
     - [Hashing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Hashing) namespace
         - [Password hashing operation provider](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/PasswordProvider.php)
           class, can create own instance or use the getDefaultProvider() method, configured via Config
