@@ -62,7 +62,7 @@ final  class Session implements IMiddleware
             session_destroy();
 
             if (self::$_config !== null) {
-                (new Cookie(self::$_config->getSessionName(), 'destroy'))->remove();
+                new Cookie(self::$_config->getSessionName(), 'destroy')->remove();
             }
         }
     }
@@ -108,8 +108,6 @@ final  class Session implements IMiddleware
                 'cookie_lifetime' => $this->config->getSessionLifetime(),
                 'cookie_httponly' => $this->config->isSessionCookieHttpOnly(),
                 'cookie_samesite' => $this->config->getSessionCookieSameSite()->value,
-                'sid_length' => $this->config->getSessionIdLength(),
-                'sid_bits_per_character' => $this->config->getSessionIdBitsPerChar(),
                 'cookie_secure' => $request->isHttps(),
                 'use_cookies' => true,
                 'use_only_cookies' => true,

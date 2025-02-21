@@ -52,7 +52,7 @@ final class Cookie
      */
     public static function set(string $name, string $value, Request $request, int $expires = 0, string $path = '/', string $domain = '', bool $httpOnly = true, CookieSameSite $sameSite = CookieSameSite::STRICT): self
     {
-        return (new self($name, $value))->create($request, $expires, $path, $domain, $httpOnly, $sameSite);
+        return new self($name, $value)->create($request, $expires, $path, $domain, $httpOnly, $sameSite);
     }
 
     /**

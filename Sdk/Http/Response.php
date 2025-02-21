@@ -26,13 +26,8 @@ final class Response
 
     public function isLocationHeaderSent(): bool
     {
-        foreach (headers_list() as $headerSent) {
-            if (str_contains($headerSent, 'Location')) {
-                return true;
-            }
-        }
+        return array_any(headers_list(), fn($headerSent) => str_contains($headerSent, 'Location'));
 
-        return false;
     }
 
     /**

@@ -117,12 +117,7 @@ final class RouteParameterCollection extends ArrayIterator
 
     public function getParamByName(string $name): ?RouteParameter
     {
-        foreach ($this as $parameter) {
-            if ($parameter->name === $name) {
-                return $parameter;
-            }
-        }
+        return array_find((array)$this, fn($parameter) => $parameter->name === $name);
 
-        return null;
     }
 }

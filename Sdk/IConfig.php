@@ -92,20 +92,6 @@ interface IConfig
     public function getSessionCookieSameSite(): CookieSameSite;
 
     /**
-     * Session configuration
-     * Gets the session cookie ID length, recommended value is <code>64</code>
-     * @see Session
-     */
-    public function getSessionIdLength(): int;
-
-    /**
-     * Session configuration
-     * Gets the session ID bits per character, recommended value is <code>6</code>
-     * @see Session
-     */
-    public function getSessionIdBitsPerChar(): int;
-
-    /**
      * CSRF protection configuration
      * Gets the CSRF token lifetime in seconds, recommended value is 600
      * @see CSRF

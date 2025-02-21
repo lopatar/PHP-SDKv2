@@ -163,6 +163,7 @@ final class Route
             $parametersArray[$routeParameter->formatIndex] = $paramValue;
         }
 
+        /** @noinspection PhpUndefinedVariableInspection */
         return '/' . implode('/', $parametersArray); //static analysis complains about not being (probably) defined. However, all edge cases are covered (hope so, haha.)
     }
 

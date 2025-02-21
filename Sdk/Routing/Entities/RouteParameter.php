@@ -61,7 +61,7 @@ final class RouteParameter
      */
     public function validateValue(string $value): bool
     {
-        return (new ParamValidator($this))->validate($value);
+        return new ParamValidator($this)->validate($value);
     }
 
     public function getType(): RouteParameterType

@@ -58,13 +58,8 @@ final class Router
 
     public function matchRoute(Request $request): ?Route
     {
-        foreach ($this->routes as $route) {
-            if ($route->match($request)) {
-                return $route;
-            }
-        }
+        return array_find($this->routes, fn($route) => $route->match($request));
 
-        return null;
     }
 
     /**
@@ -74,12 +69,7 @@ final class Router
      */
     public function getRoute(string $name): ?Route
     {
-        foreach ($this->routes as $route) {
-            if ($route->name === $name) {
-                return $route;
-            }
-        }
+        return array_find($this->routes, fn($route) => $route->name === $name);
 
-        return null;
     }
 }
