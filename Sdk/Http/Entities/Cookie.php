@@ -9,6 +9,7 @@ use Sdk\IConfig;
 use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Session;
 use Sdk\Utils\Encryption\AES;
+use Sdk\Utils\Encryption\Exceptions\CryptoOperationFailed;
 
 final class Cookie
 {
@@ -20,16 +21,11 @@ final class Cookie
 
     /**
      * Static constructor to get the {@see Cookie} object from an encrypted value
-     * @throws CookieDecryptFailed
+     * @throws CryptoOperationFailed
      */
     public static function fromEncrypted(string $name, string $encryptedValue): self
     {
-        $decryptedValue = AES::decryptString($encryptedValue, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value));
-
-        if ($decryptedValue === null) {
-            throw new CookieDecryptFailed($name, $encryptedValue);
-        }
-
+        $decryptedValue = AES::decryptString($encryptedValue, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value), Session::get(SessionVariable::COOKIE_ENCRYPTION_IV->value));
         return new self($name, $decryptedValue);
     }
 
@@ -49,6 +45,7 @@ final class Cookie
      * @param bool $httpOnly
      * @param CookieSameSite $sameSite
      * @return $this
+     * @throws CryptoOperationFailed
      */
     public static function set(string $name, string $value, Request $request, int $expires = 0, string $path = '/', string $domain = '', bool $httpOnly = true, CookieSameSite $sameSite = CookieSameSite::STRICT): self
     {
@@ -64,10 +61,11 @@ final class Cookie
      * @param bool $httpOnly
      * @param CookieSameSite $sameSite
      * @return $this
+     * @throws CryptoOperationFailed
      */
     public function create(Request $request, int $expires = 0, string $path = '/', string $domain = '', bool $httpOnly = true, CookieSameSite $sameSite = CookieSameSite::STRICT): self
     {
-        $cookieValue = (self::$config->isCookieEncryptionEnabled()) ? AES::encryptString($this->value, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) : $this->value;
+        $cookieValue = (self::$config->isCookieEncryptionEnabled()) ? AES::encryptString($this->value, Session::get(SessionVariable::COOKIE_ENCRYPTION_KEY->value), Session::get(SessionVariable::COOKIE_ENCRYPTION_IV->value)) : $this->value;
         setcookie($this->name, $cookieValue, [
             'expires' => ($expires === 0) ? 0 : time() + $expires,
             'path' => $path,

@@ -17,6 +17,7 @@ use Sdk\Render\View;
 use Sdk\Routing\Entities\Route;
 use Sdk\Routing\Exceptions\RouteAlreadyExists;
 use Sdk\Routing\Router;
+use Sdk\Utils\Encryption\AES;
 use Sdk\Utils\Hashing\Exceptions\InvalidPasswordAlgorithm;
 use Sdk\Utils\Hashing\PasswordProvider;
 use Sdk\Utils\Random;
@@ -40,6 +41,7 @@ final class App
         $this->response = new Response();
         $this->router = new Router();
 
+        $this->initAesEncryption();
         $this->initCookieEncryption();
         $this->initDefaultPasswordProvider();
         $this->spoofServerHeader();
@@ -59,9 +61,15 @@ final class App
             }
 
             if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
-                Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, Random::stringSafe(32));
+                Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, AES::generateKey());
+                Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_IV->value, AES::generateKey());
             }
         }
+    }
+
+    private function initAesEncryption(): void
+    {
+        AES::setConfig($this->config);
     }
 
     /**

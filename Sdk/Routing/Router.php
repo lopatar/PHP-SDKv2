@@ -59,7 +59,6 @@ final class Router
     public function matchRoute(Request $request): ?Route
     {
         return array_find($this->routes, fn($route) => $route->match($request));
-
     }
 
     /**

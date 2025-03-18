@@ -2,48 +2,68 @@
 
 namespace Sdk\Utils\Encryption;
 
+use Sdk\IConfig;
+use Sdk\Utils\Encryption\Exceptions\CryptoOperationFailed;
 use Sdk\Utils\Random;
 
 /**
  * @see https://github.com/mervick/aes-everywhere/blob/master/php/src/AES256.php
  */
+//TODO: derive key using PBKDF2 or something
 abstract class AES
 {
-    public static function encryptString(string $text, string $keyPhrase): string
-    {
-        $salt = Random::bytesSafe(8);
-        $key = $iv = '';
+    private static IConfig $config;
 
-        self::deriveKeyAndIV($salt, $keyPhrase, $key, $iv);
-        return base64_encode('Salted__' . $salt . openssl_encrypt($text, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv));
+    public static function setConfig(IConfig $config): void
+    {
+        self::$config = $config;
     }
 
-    private static function deriveKeyAndIV(string $salt, string $keyPhrase, string &$key, string &$iv): void
+    public static function getIVLength(): int
     {
-        $salted = $dx = '';
-        while (strlen($salted) < 48) {
-            $dx = md5($dx . $keyPhrase . $salt, true);
-            $salted .= $dx;
-        }
-
-        $key = substr($salted, 0, 32);
-        $iv = substr($salted, 32, 16);
+        return openssl_cipher_iv_length(self::$config->getDefaultAesCipher());
     }
 
-    public static function decryptString(string $text, string $keyPhrase): string|null
+    public static function generateIV(): string
     {
-        $text = base64_decode($text);
+        return Random::bytesSafe(self::getIVLength());
+    }
 
-        if ($text !== false && !str_starts_with($text, 'Salted__')) {
-            return null;
+    public static function getKeyLength(): int
+    {
+        return openssl_cipher_key_length(self::$config->getDefaultAesCipher());
+    }
+
+    public static function generateKey(): string
+    {
+        return Random::bytesSafe(self::getKeyLength());
+    }
+
+    /**
+     * @throws CryptoOperationFailed
+     */
+    public static function encryptString(string $plainText, string $encKey, string $iv): string|false
+    {
+        $encryptedData = openssl_encrypt($plainText, self::$config->getDefaultAesCipher(), $encKey, $iv);
+
+        if ($encryptedData === false) {
+            throw new CryptoOperationFailed("OpenSSL encryption failed");
         }
 
-        $salt = substr($text, 8, 8);
-        $text = substr($text, 16);
+        return $encryptedData;
+    }
 
-        $key = $iv = '';
-        self::deriveKeyAndIV($salt, $keyPhrase, $key, $iv);
+    /**
+     * @throws CryptoOperationFailed
+     */
+    public static function decryptString(string $cipherText, string $encKey, string $iv): string|false
+    {
+        $decryptedData = openssl_decrypt($cipherText, self::$config->getDefaultAesCipher(), $encKey, $iv);
 
-        return openssl_decrypt($text, 'aes-256-cbc', $key, true, $iv);
+        if ($decryptedData === false) {
+            throw new CryptoOperationFailed("OpenSSL decryption failed");
+        }
+
+        return $decryptedData;
     }
 }

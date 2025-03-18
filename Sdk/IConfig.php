@@ -5,6 +5,7 @@ namespace Sdk;
 
 use Sdk\Http\Entities\CookieSameSite;
 use Sdk\Middleware\Session;
+use Sdk\Utils\Encryption\AES;
 
 interface IConfig
 {
@@ -129,4 +130,9 @@ interface IConfig
      * Default password hashing provider hash algorithm options
      */
     public function getDefaultPasswordProviderHashOptions(): array;
+
+    /**
+     * Default AES cipher to be used within the @see AES class, currently only AES-128/256-CBC is supported!!!!!
+     */
+    public function getDefaultAesCipher(): string;
 }
