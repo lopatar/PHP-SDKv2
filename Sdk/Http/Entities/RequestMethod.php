@@ -52,6 +52,6 @@ enum RequestMethod: string
 
     public static function getAllMethodsAsArray(): array
     {
-       return RequestMethod::cases();
+        return RequestMethod::cases();
     }
 }

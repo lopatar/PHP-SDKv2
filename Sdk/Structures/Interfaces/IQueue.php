@@ -17,5 +17,6 @@ interface IQueue
     public function isEmpty(): bool;
 
     public function isFull(): bool;
+
     public function reset(): void;
 }

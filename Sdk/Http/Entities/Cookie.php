@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Sdk\Http\Entities;
 
-use Sdk\Http\Exceptions\CookieDecryptFailed;
 use Sdk\Http\Request;
 use Sdk\IConfig;
 use Sdk\Middleware\Entities\SessionVariable;

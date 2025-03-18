@@ -53,6 +53,17 @@ abstract class Random
     }
 
     /**
+     * Function that clamps the minimum value of random functions if the $min value is higher than $max to $min = $max - 1
+     * @param int|float $min
+     * @param int|float $max
+     * @return int|float
+     */
+    private static function clampMinNum(int|float $min, int|float $max): int|float
+    {
+        return ($min > $max) ? $max - 1 : $min;
+    }
+
+    /**
      * Function that generates a cryptographically secure random integers
      * @param int $min If bigger than $max, it gets clamped to value of $max - 1
      * @param int $max
@@ -64,16 +75,5 @@ abstract class Random
     {
         $min = self::clampMinNum($min, $max);
         return (new Randomizer)->getInt($min, $max);
-    }
-
-    /**
-     * Function that clamps the minimum value of random functions if the $min value is higher than $max to $min = $max - 1
-     * @param int|float $min
-     * @param int|float $max
-     * @return int|float
-     */
-    private static function clampMinNum(int|float $min, int|float $max): int|float
-    {
-        return ($min > $max) ? $max - 1 : $min;
     }
 }

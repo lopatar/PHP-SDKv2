@@ -20,7 +20,6 @@ use Sdk\Routing\Router;
 use Sdk\Utils\Encryption\AES;
 use Sdk\Utils\Hashing\Exceptions\InvalidPasswordAlgorithm;
 use Sdk\Utils\Hashing\PasswordProvider;
-use Sdk\Utils\Random;
 
 final class App
 {
@@ -48,6 +47,11 @@ final class App
         $this->initDatabaseConnection();
     }
 
+    private function initAesEncryption(): void
+    {
+        AES::setConfig($this->config);
+    }
+
     /**
      * Initializes the cookie encryption key
      */
@@ -64,15 +68,10 @@ final class App
                 Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, AES::generateKey());
             }
 
-             if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_IV->value)) {
-                 Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_IV->value, AES::generateKey());
-             }
+            if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_IV->value)) {
+                Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_IV->value, AES::generateKey());
+            }
         }
-    }
-
-    private function initAesEncryption(): void
-    {
-        AES::setConfig($this->config);
     }
 
     /**
@@ -95,12 +94,6 @@ final class App
         if ($this->config->isMariaDbEnabled()) {
             Connection::init($this->config->getMariaDbHost(), $this->config->getMariaDbUsername(), $this->config->getMariaDbPassword(), $this->config->getMariaDbDatabaseName());
         }
-    }
-
-    public function addMiddleware(IMiddleware $middleware): self
-    {
-        $this->middleware[] = $middleware;
-        return $this;
     }
 
     public function run(): never
@@ -171,14 +164,19 @@ final class App
     public function redirect(string $from, string $to, ?string $name = null): Route
     {
         //only needed because of shit design I built this "framework" with...
-        $dummyCallback = function(Request $request, Response $response, array $args): Response
-        {
+        $dummyCallback = function (Request $request, Response $response, array $args): Response {
             return $response;
         };
 
         $redirectMiddleware = new Redirect($to);
         return $this->route($from, $dummyCallback, RequestMethod::getAllMethodsAsArray(), $name)
             ->addMiddleware($redirectMiddleware);
+    }
+
+    public function addMiddleware(IMiddleware $middleware): self
+    {
+        $this->middleware[] = $middleware;
+        return $this;
     }
 
     /**

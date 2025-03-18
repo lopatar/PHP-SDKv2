@@ -19,24 +19,24 @@ abstract class AES
         self::$config = $config;
     }
 
-    public static function getIVLength(): int
-    {
-        return openssl_cipher_iv_length(self::$config->getDefaultAesCipher());
-    }
-
     public static function generateIV(): string
     {
         return Random::bytesSafe(self::getIVLength());
     }
 
-    public static function getKeyLength(): int
+    public static function getIVLength(): int
     {
-        return openssl_cipher_key_length(self::$config->getDefaultAesCipher());
+        return openssl_cipher_iv_length(self::$config->getDefaultAesCipher());
     }
 
     public static function generateKey(): string
     {
         return Random::bytesSafe(self::getKeyLength());
+    }
+
+    public static function getKeyLength(): int
+    {
+        return openssl_cipher_key_length(self::$config->getDefaultAesCipher());
     }
 
     /**

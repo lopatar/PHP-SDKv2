@@ -31,15 +31,6 @@ final class Response
     }
 
     /**
-     * @see https://php.net/header
-     */
-    public function addHeader(string $name, string $value): self
-    {
-        header("$name: $value");
-        return $this;
-    }
-
-    /**
      * @see https://php.net/header_remove
      */
     public function removeHeader(string $name): self
@@ -113,6 +104,22 @@ final class Response
         return $this;
     }
 
+    public function redirect($to): never
+    {
+        $this->setStatusCode(StatusCode::MOVED_PERMANENTLY);
+        $this->addHeader('Location', $to);
+        $this->send();
+    }
+
+    /**
+     * @see https://php.net/header
+     */
+    public function addHeader(string $name, string $value): self
+    {
+        header("$name: $value");
+        return $this;
+    }
+
     /**
      * Sends the response with headers, text and the status code. Application ends
      */
@@ -125,12 +132,5 @@ final class Response
         $this->view?->render();
 
         die();
-    }
-
-    public function redirect($to): never
-    {
-        $this->setStatusCode(StatusCode::MOVED_PERMANENTLY);
-        $this->addHeader('Location', $to);
-        $this->send();
     }
 }

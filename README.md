@@ -106,7 +106,8 @@ final class Config implements \Sdk\IConfig
       CSRF attacks
     - [HttpBasicAuth](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, used
       for basic HTTP auth, compares passwords hashed using [password_hash](https://www.php.net/password_hash)
-    - [Redirect](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, useful for redirecting right in the request processing chain.
+    - [Redirect](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, useful for
+      redirecting right in the request processing chain.
 - Database connectors
     - [MySQL/MariaDB](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Database/MariaDB/Connection.php) connector,
       configured via the [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) system
@@ -116,7 +117,9 @@ final class Config implements \Sdk\IConfig
     - [Hashing](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Hashing) namespace
         - [Password hashing operation provider](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/PasswordProvider.php)
           class, can create own instance or use the getDefaultProvider() method, configured via Config
-    - [Random](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Random.php) class, used for generating cryptographically secure data - wrapping the [Random\Randomizer](https://www.php.net/manual/en/class.random-randomizer.php) class
+    - [Random](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Random.php) class, used for generating
+      cryptographically secure data - wrapping
+      the [Random\Randomizer](https://www.php.net/manual/en/class.random-randomizer.php) class
     - [Math](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Math.php) class, containing simple math utilities
       not contained in PHP
     - [Boolean](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Boolean.php) class, containing simple methods
@@ -124,8 +127,10 @@ final class Config implements \Sdk\IConfig
     - [Strings](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Utils/Strings.php) class, containing simple methods
       for manipulating strings, detecting encoding etc.
 - [Structures](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/) namespace
-    - [Stack](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/Stack.php) Fixed size stack implementation allowing mixed data type values
-    - [Queue](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/Queue.php) Fixed size queue implementation allowing mixed data type values
+    - [Stack](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/Stack.php) Fixed size stack implementation
+      allowing mixed data type values
+    - [Queue](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Structures/Queue.php) Fixed size queue implementation
+      allowing mixed data type values
 - [Config](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php) object
     - Used for configuring database connectors, session, CSRF middleware, default password hashing provider
     - [Cookie encryption toggle](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/IConfig.php#L134)
