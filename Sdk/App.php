@@ -159,14 +159,14 @@ final class App
      */
     public function redirect(string $from, string $to, ?string $name = null): Route
     {
-        //only needed because of shit design i built this "framework" with...
+        //only needed because of shit design I built this "framework" with...
         $dummyCallback = function(Request $request, Response $response, array $args): Response
         {
             return $response;
         };
 
         $redirectMiddleware = new Redirect($to);
-        return $this->route($from, $dummyCallback, RequestMethod::GET, $name)
+        return $this->route($from, $dummyCallback, RequestMethod::getAllMethodsAsArray(), $name)
             ->addMiddleware($redirectMiddleware);
     }
 
