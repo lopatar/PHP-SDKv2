@@ -126,4 +126,11 @@ final class Response
 
         die();
     }
+
+    public function redirect($to): never
+    {
+        $this->setStatusCode(StatusCode::MOVED_PERMANENTLY);
+        $this->addHeader('Location', $to);
+        $this->send();
+    }
 }

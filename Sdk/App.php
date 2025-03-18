@@ -11,6 +11,7 @@ use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Interfaces\IMiddleware;
+use Sdk\Middleware\Redirect;
 use Sdk\Middleware\Session;
 use Sdk\Render\View;
 use Sdk\Routing\Entities\Route;
@@ -151,6 +152,22 @@ final class App
     public function put(string $requestPathFormat, callable|string $callback, ?string $name = null): Route
     {
         return $this->route($requestPathFormat, $callback, RequestMethod::PUT, $name);
+    }
+
+    /**
+     * @throws RouteAlreadyExists
+     */
+    public function redirect(string $from, string $to, ?string $name = null): Route
+    {
+        //only needed because of shit design i built this "framework" with...
+        $dummyCallback = function(Request $request, Response $response, array $args): Response
+        {
+            return $response;
+        };
+
+        $redirectMiddleware = new Redirect($to);
+        return $this->route($from, $dummyCallback, RequestMethod::GET, $name)
+            ->addMiddleware($redirectMiddleware);
     }
 
     /**
