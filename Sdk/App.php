@@ -62,8 +62,11 @@ final class App
 
             if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
                 Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, AES::generateKey());
-                Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_IV->value, AES::generateKey());
             }
+
+             if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_IV->value)) {
+                 Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_IV->value, AES::generateKey());
+             }
         }
     }
 
