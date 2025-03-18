@@ -5,7 +5,11 @@ namespace Sdk\Utils;
 
 use Exception;
 use JetBrains\PhpStorm\Immutable;
+use Random\Randomizer;
 
+/**
+ * Random class that implements the new PHP random APIs. We can safely use the base Randomizer class, because the default is the SecureEngine
+ */
 #[Immutable]
 abstract class Random
 {
@@ -13,7 +17,7 @@ abstract class Random
      * Function that generates a cryptographically secure random string
      * @param int $length Length of the string, if lower than 2, it gets clamped to 2
      * @return string
-     * @uses bin2hex(), Random::bytesSafe()
+     * @uses bin2hex(), Randomizer
      */
     public static function stringSafe(int $length): string
     {
@@ -21,33 +25,31 @@ abstract class Random
             $length = 2;
         }
 
-        return bin2hex(self::bytesSafe($length / 2));
+        return bin2hex((new Randomizer)->getBytes($length / 2));
     }
 
     /**
      * Function that generates a cryptographically secure bytes
      * @param int $length
      * @return string
+     * @uses Randomizer
      */
     public static function bytesSafe(int $length): string
     {
-        return openssl_random_pseudo_bytes($length);
+        return (new Randomizer)->getBytes($length);
     }
 
     /**
      * Function that generates cryptographically secure random floats
      * @param float $min If bigger than $max, it gets clamped to value of $max - 1
      * @param float $max
-     * @param int $decimals If lower than 1, clamped to 1, if higher than 14, clamped to 14
      * @return float
-     * @throws Exception
-     * @uses Random::floatUnsafe(), Random::intSafe(), mt_srand()
-     * @see
+     * @uses Randomizer
      */
-    public static function floatSafe(float $min, float $max, int $decimals = 1): float
+    public static function floatSafe(float $min, float $max): float
     {
-        mt_srand(self::intSafe(PHP_INT_MIN, PHP_INT_MAX));
-        return self::floatUnsafe($min, $max, $decimals);
+        $min = self::clampMinNum($min, $max);
+        return (new Randomizer)->getFloat($min, $max);
     }
 
     /**
@@ -61,8 +63,7 @@ abstract class Random
     public static function intSafe(int $min, int $max): int
     {
         $min = self::clampMinNum($min, $max);
-
-        return random_int($min, $max);
+        return (new Randomizer)->getInt($min, $max);
     }
 
     /**
@@ -74,28 +75,5 @@ abstract class Random
     private static function clampMinNum(int|float $min, int|float $max): int|float
     {
         return ($min > $max) ? $max - 1 : $min;
-    }
-
-    /**
-     * Function that generates NON CRYPTO SECURE random floats
-     * @param float $min If bigger than $max, it gets clamped to value of $max - 1
-     * @param float $max
-     * @param int $decimals If lower than 1, clamped to 1, if higher than 14, clamped to 14
-     * @return float
-     * @see https://www.php.net/manual/en/function.mt-getrandmax.php
-     * @uses mt_rand(), mt_getrandmax(), Random::clampMinNum(), Random::clampDecimals()
-     */
-    public static function floatUnsafe(float $min, float $max, int $decimals = 1): float
-    {
-        $min = self::clampMinNum($min, $max);
-        $decimals = self::clampDecimals($decimals);
-
-        $value = $min + mt_rand() / mt_getrandmax() * ($max - $min);
-        return round($value, $decimals);
-    }
-
-    private static function clampDecimals(int $decimals): int
-    {
-        return ($decimals < 1) ? 1 : (($decimals > 14) ? 14 : $decimals); //If lower than 1, clamped to 1, if higher than 14, clamped to 14
     }
 }
