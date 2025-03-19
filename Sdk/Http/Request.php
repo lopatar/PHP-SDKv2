@@ -34,7 +34,11 @@ final class Request
      * Associative array of all request headers, keys might be assigned to an array of values
      */
     public readonly array $headers;
-    private Url $url;
+    public Url $url {
+        get {
+            return $this->url;
+        }
+    }
 
     /**
      * @var Route|null Route associated with the current object, will be null for {@see App} middleware
@@ -83,12 +87,7 @@ final class Request
      */
     public function getGet(string $name): string|null
     {
-        return $this->getUrl()->getParameter($name);
-    }
-
-    public function getUrl(): Url
-    {
-        return $this->url;
+        return $this->url->getParameter($name);
     }
 
     /**
@@ -174,7 +173,7 @@ final class Request
 
     public function isHttps(): bool
     {
-        return $this->getUrl()->isHttps();
+        return $this->url->isHttps();
     }
 
     public function isHttp2(): bool

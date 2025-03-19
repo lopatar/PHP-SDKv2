@@ -68,7 +68,7 @@ final class Cookie
         setcookie($this->name, $cookieValue, [
             'expires' => ($expires === 0) ? 0 : time() + $expires,
             'path' => $path,
-            'domain' => ($domain === '') ? $request->getUrl()->domainName->fullText : $domain,
+            'domain' => ($domain === '') ? $request->url->domainName->fullText : $domain,
             'secure' => $request->isHttps(),
             'httponly' => $httpOnly,
             'samesite' => $sameSite->value

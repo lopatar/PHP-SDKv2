@@ -33,7 +33,7 @@ final readonly class RouteMatcher
      */
     public function matchPlain(): bool
     {
-        return $this->route->requestPathFormat === $this->request->getUrl()->path;
+        return $this->route->requestPathFormat === $this->request->url->path;
     }
 
     /**
@@ -46,7 +46,7 @@ final readonly class RouteMatcher
      */
     public function matchParameters(array $routePathParts, RouteParameterCollection $routeParameters): bool
     {
-        $requestPathParts = explode('/', $this->request->getUrl()->path); //We split the same as in Request::setUpParameters()
+        $requestPathParts = explode('/', $this->request->url->path); //We split the same as in Request::setUpParameters()
 
         if (!$this->matchPathPartCount($routePathParts, $requestPathParts)) {
             return false;
