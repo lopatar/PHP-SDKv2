@@ -3,7 +3,7 @@
 Powerful PHP framework, written in PHP 8.4, modernised version of rather
 primitive [PHP SDK](https://github.com/lopatar/PHP-SDK) (which is now archived).
 
-## **This project is not actively developed, not keeping track with current PHP updates.**
+## **Currently trying to stay in line with current PHP updates.**
 
 # Requirements
 
