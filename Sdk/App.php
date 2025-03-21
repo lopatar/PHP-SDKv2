@@ -34,9 +34,6 @@ final class App
      */
     private array $middleware = [];
 
-    /**
-     * @throws InvalidPasswordAlgorithm
-     */
     public function __construct(private readonly IConfig $config)
     {
         $this->request = new Request($this->config);

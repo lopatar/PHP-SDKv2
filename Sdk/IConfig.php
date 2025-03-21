@@ -135,4 +135,6 @@ interface IConfig
      * Default AES cipher to be used within the @see AES class, currently only AES-128/256-CBC is supported!!!!!
      */
     public function getDefaultAesCipher(): string;
+
+    public function getLoggingPath(): string;
 }
