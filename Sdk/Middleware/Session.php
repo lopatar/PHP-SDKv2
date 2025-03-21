@@ -7,18 +7,13 @@ use JetBrains\PhpStorm\Immutable;
 use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
-use Sdk\IConfig;
+use Sdk\Middleware\Entities\ConstructorConfigTrait;
 use Sdk\Middleware\Interfaces\IMiddleware;
 
 #[Immutable]
 final  class Session implements IMiddleware
 {
-    private static ?IConfig $_config = null;
-
-    public function __construct(private readonly IConfig $config)
-    {
-        self::$_config = $this->config;
-    }
+    use ConstructorConfigTrait;
 
     /**
      * Returns the value of session variable, set using {@see Session::set()}
@@ -61,8 +56,8 @@ final  class Session implements IMiddleware
         if (self::isStarted()) {
             session_destroy();
 
-            if (self::$_config !== null) {
-                new Cookie(self::$_config->getSessionName(), 'destroy')->remove();
+            if (self::$configStatic !== null) {
+                new Cookie(self::$configStatic->getSessionName(), 'destroy')->remove();
             }
         }
     }

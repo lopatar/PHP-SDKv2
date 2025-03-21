@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Sdk\Routing\Entities;
 
-use Exception;
 use Sdk\App;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
@@ -175,15 +174,8 @@ final class Route
     public function execute(Request $request, Response $response): Response
     {
         $paramsAssoc = $this->parameters->getAssoc();
-        try {
-            $response = $this->runMiddleware($request, $response, $paramsAssoc);
-            return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
-        } catch (Exception $e) {
-            $response->setStatusCode(StatusCode::INTERNAL_SERVER_ERROR);
-            $exceptionMessage = $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>" . $e->getFile() . "<br>" . $e->getLine();
-            $response->writeLine(($this->config->isProduction()) ? 'Internal server error occurred, please try again later.' : $exceptionMessage);
-            return $response;
-        }
+        $response = $this->runMiddleware($request, $response, $paramsAssoc);
+        return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
     }
 
     private function runMiddleware(Request $request, Response $response, array $args): Response

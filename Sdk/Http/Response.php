@@ -81,16 +81,13 @@ final class Response
      * This method create a {@see View} object and sets it using the {@see Response::setView()} method
      * @param string $fileName View file name
      * @return View|null
+     * @throws ViewFileNotFound
      */
     public function createView(string $fileName): ?View
     {
-        try {
-            $view = new View($fileName);
-            $this->setView($view);
-            return $view;
-        } catch (ViewFileNotFound) {
-            return null;
-        }
+        $view = new View($fileName);
+        $this->setView($view);
+        return $view;
     }
 
     public function getView(): ?View
