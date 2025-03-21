@@ -5,6 +5,9 @@ namespace Sdk\Middleware;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
 
+/**
+ * @internal
+ */
 final readonly class Redirect implements Interfaces\IMiddleware
 {
     public function __construct(public string $to)

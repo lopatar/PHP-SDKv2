@@ -170,6 +170,7 @@ final class Route
      * If the callback is not found {@see StatusCode NOT_IMPLEMENTED} response code is sent
      * @param Response $response Initial response after running {@see App} middleware
      * @return Response Response after running route middleware & callback
+     * @throws \Exception
      */
     public function execute(Request $request, Response $response): Response
     {
@@ -178,6 +179,9 @@ final class Route
         return call_user_func_array($this->callback, [$request, $response, $this->parameters->getAssoc()]);
     }
 
+    /**
+     * @throws \Exception
+     */
     private function runMiddleware(Request $request, Response $response, array $args): Response
     {
         foreach ($this->middleware as $middleware) {

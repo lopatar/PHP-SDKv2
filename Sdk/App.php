@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Sdk;
 
+use Exception;
 use Sdk\Database\MariaDB\Connection;
 use Sdk\Http\Entities\Cookie;
 use Sdk\Http\Entities\RequestMethod;
@@ -11,6 +12,7 @@ use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\Middleware\Entities\SessionVariable;
 use Sdk\Middleware\Interfaces\IMiddleware;
+use Sdk\Middleware\Logging;
 use Sdk\Middleware\Redirect;
 use Sdk\Middleware\Session;
 use Sdk\Render\View;
@@ -26,6 +28,7 @@ final class App
     public readonly Router $router;
     private readonly Request $request;
     private Response $response;
+    private Logging $logger;
     /**
      * @var IMiddleware[] $middleware
      */
@@ -39,12 +42,17 @@ final class App
         $this->request = new Request($this->config);
         $this->response = new Response();
         $this->router = new Router();
+        $this->logger = new Logging($this->config);
 
-        $this->initAesEncryption();
-        $this->initCookieEncryption();
-        $this->initDefaultPasswordProvider();
-        $this->spoofServerHeader();
-        $this->initDatabaseConnection();
+        try {
+            $this->initAesEncryption();
+            $this->initCookieEncryption();
+            $this->initDefaultPasswordProvider();
+            $this->spoofServerHeader();
+            $this->initDatabaseConnection();
+        } catch (Exception $e) {
+            $this->logger->log($this->request, $this->response, [], $e);
+        }
     }
 
     private function initAesEncryption(): void
@@ -54,6 +62,7 @@ final class App
 
     /**
      * Initializes the cookie encryption key
+     * @throws Exception
      */
     private function initCookieEncryption(): void
     {
@@ -96,21 +105,32 @@ final class App
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function run(): never
     {
-        $this->runMiddleware();
-        $matchedRoute = $this->router->matchRoute($this->request);
+        try {
+            $this->runMiddleware();
+            $matchedRoute = $this->router->matchRoute($this->request);
 
-        if ($matchedRoute !== null) {
-            $this->request->setRoute($matchedRoute);
-            $this->response = $matchedRoute->execute($this->request, $this->response);
-        } else {
-            $this->response->setStatusCode(StatusCode::NOT_FOUND);
+            if ($matchedRoute !== null) {
+                $this->request->setRoute($matchedRoute);
+                $this->response = $matchedRoute->execute($this->request, $this->response);
+            } else {
+                $this->response->setStatusCode(StatusCode::NOT_FOUND);
+            }
+
+            $this->response->send();
+        } catch (Exception $e) {
+            $this->logger->log($this->request, $this->response, [], $e);
         }
-
-        $this->response->send();
     }
 
+
+    /**
+     * @throws Exception
+     */
     private function runMiddleware(): void
     {
         foreach ($this->middleware as $middleware) {
