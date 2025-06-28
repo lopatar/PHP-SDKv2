@@ -38,6 +38,10 @@ final readonly class HttpBasicAuth implements Interfaces\IMiddleware
 
     public function execute(Request $request, Response $response, array $args): Response
     {
+        if (Session::get('loggedIn') === 1) {
+            return $response;
+        }
+
         $credentialsHeader = $request->getHeader('Authorization');
 
         if ($credentialsHeader === null) {
@@ -63,6 +67,8 @@ final readonly class HttpBasicAuth implements Interfaces\IMiddleware
         if (!$this->validateCredentials($credentials)) {
             return $this->buildAuthenticationResponse($response);
         }
+
+        Session::set('loggedIn', 1);
 
         return $response;
     }
