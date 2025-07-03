@@ -103,7 +103,7 @@ final class Response
 
     public function redirect($to): never
     {
-        $this->setStatusCode(StatusCode::MOVED_PERMANENTLY);
+        $this->setStatusCode(StatusCode::TEMPORARY_REDIRECT);
         $this->addHeader('Location', $to);
         $this->send();
     }
