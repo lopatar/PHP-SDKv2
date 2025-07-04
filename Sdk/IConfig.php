@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Sdk;
 
 use Sdk\Http\Entities\CookieSameSite;
+use Sdk\Middleware\Logging;
 use Sdk\Middleware\Session;
 use Sdk\Utils\Encryption\AES;
 
@@ -136,5 +137,8 @@ interface IConfig
      */
     public function getDefaultAesCipher(): string;
 
+    /**
+     * Logs path the @see Logging
+     */
     public function getLoggingPath(): string;
 }
