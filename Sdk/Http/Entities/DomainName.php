@@ -38,6 +38,13 @@ final readonly class DomainName
         $nameParts = explode('.', $serverName);
         $count = count($nameParts);
 
+        if ($count === 0) {
+            $this->domain = $serverName;
+            $this->fullText = $serverName;
+            $this->subDomains = [];
+            return;
+        }
+
         $this->tld = $nameParts[$count - 1]; //TLD is the last
         $this->domain = $nameParts[$count - 2] . ".$this->tld";
 
