@@ -3,7 +3,6 @@
 namespace Sdk\Middleware;
 
 use Exception;
-use Sdk\Database\MariaDB\Connection;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
 use Sdk\Middleware\Entities\ConstructorLoggingTrait;
@@ -29,20 +28,15 @@ class Logging implements ILoggingMiddleware
 
     private function logProd(LoggingObject $log): void
     {
-
+        $handle = fopen($this->config->getLoggingPath(), "a");
+        fwrite($handle, $log->request->url->path . ":" . $log->exception->getMessage() . "\n");
+        fclose($handle);
     }
 
     private function logDev(LoggingObject $log): void
     {
-
-    }
-
-    private function checkConfigPath(LoggingObject $log): void
-    {
-        $logPath = $this->config->getLoggingPath();
-
-        if (!file_exists($logPath)) {
-            Utils::printLine("[LOG] Log path does not exist: $logPath");
-        }
+        $handle = fopen($this->config->getLoggingPath(), "a");
+        fwrite($handle, print_r($log, true));
+        fclose($handle);
     }
 }
