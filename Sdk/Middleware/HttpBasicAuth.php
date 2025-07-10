@@ -91,9 +91,7 @@ final readonly class HttpBasicAuth implements Interfaces\IMiddleware
             if ($userCredentials[0] !== $credentialPair['username']) {
                 continue;
             }
-
-
-            return PasswordProvider::verify($userCredentials[1], $credentialPair['password']);
+            return PasswordProvider::getDefaultProvider()->verify($userCredentials[1], $credentialPair['password']);
         }
 
         return false;

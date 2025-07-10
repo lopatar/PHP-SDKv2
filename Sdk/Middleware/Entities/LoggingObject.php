@@ -3,8 +3,6 @@
 namespace Sdk\Middleware\Entities;
 
 use Exception;
-use Sdk\Http\Entities\RequestMethod;
-use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
 
@@ -13,6 +11,7 @@ use Sdk\Http\Response;
  */
 final class LoggingObject
 {
-    public function __construct(public readonly Request $request, public readonly Response $response, public readonly array $args, public Exception $exception, public string $path) {
+    public function __construct(public readonly Request $request, public readonly Response $response, public readonly array $args, public Exception $exception, public string $path)
+    {
     }
 }

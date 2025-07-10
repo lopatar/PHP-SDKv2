@@ -41,7 +41,7 @@ final class PasswordProvider
         return self::$passwords ?? null;
     }
 
-    public static function verify(string $password, string $hash): bool
+    public function verify(string $password, string $hash): bool
     {
         return password_verify($password, $hash);
     }
@@ -59,7 +59,7 @@ final class PasswordProvider
      */
     public function generatePassword(): array
     {
-        $password = Random::stringSafe(24);
+        $password = Random::stringSafe(64);
         return ['password' => $password, 'passwordHash' => $this->hash($password)];
     }
 

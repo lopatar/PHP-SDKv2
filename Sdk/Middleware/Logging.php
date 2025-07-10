@@ -8,7 +8,6 @@ use Sdk\Http\Response;
 use Sdk\Middleware\Entities\ConstructorLoggingTrait;
 use Sdk\Middleware\Entities\LoggingObject;
 use Sdk\Middleware\Interfaces\ILoggingMiddleware;
-use Sdk\Utils\Utils;
 
 /**
  * Logging middleware that handles the Exceptions thrown!
