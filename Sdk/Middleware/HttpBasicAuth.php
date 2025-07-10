@@ -7,6 +7,7 @@ use JetBrains\PhpStorm\Immutable;
 use Sdk\Http\Entities\StatusCode;
 use Sdk\Http\Request;
 use Sdk\Http\Response;
+use Sdk\Utils\Hashing\PasswordProvider;
 
 /**
  * Middleware that allows for performing HTTP basic auth
@@ -91,7 +92,8 @@ final readonly class HttpBasicAuth implements Interfaces\IMiddleware
                 continue;
             }
 
-            return password_verify($userCredentials[1], $credentialPair['password']);
+
+            return PasswordProvider::verify($userCredentials[1], $credentialPair['password']);
         }
 
         return false;
