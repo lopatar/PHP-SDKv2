@@ -42,18 +42,21 @@ final class App
         $this->logger = new Logging($this->config);
 
         try {
+            Logging::logMessage("Initializing application", "App");
+
             $this->initAesEncryption();
             $this->initCookieEncryption();
             $this->initDefaultPasswordProvider();
             $this->spoofServerHeader();
             $this->initDatabaseConnection();
         } catch (Exception $e) {
-            $this->logger->log($this->request, $this->response, [], $e);
+            $this->logger->logException($this->request, $this->response, [], $e);
         }
     }
 
     private function initAesEncryption(): void
     {
+        Logging::logMessage("Initializing AES", "Encryption");
         AES::setConfig($this->config);
     }
 
@@ -63,18 +66,22 @@ final class App
      */
     private function initCookieEncryption(): void
     {
+        Logging::logMessage("Initializing cookie encryption", "Encryption");
         Cookie::setConfig($this->config);
 
         if ($this->config->isCookieEncryptionEnabled()) {
             if (!Session::isStarted()) {
+                Logging::logMessage("Session not started, initializing session middleware", "Encryption");
                 new Session($this->config)->execute($this->request, $this->response, []);
             }
 
             if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_KEY->value)) {
+                Logging::logMessage("Generating cookie encryption AES key", "Encryption");
                 Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_KEY->value, AES::generateKey());
             }
 
             if (!Session::exists(SessionVariable::COOKIE_ENCRYPTION_IV->value)) {
+                Logging::logMessage("Generating cookie encryption AES IV", "Encryption");
                 Middleware\Session::set(SessionVariable::COOKIE_ENCRYPTION_IV->value, AES::generateIV());
             }
         }
@@ -85,12 +92,14 @@ final class App
      */
     private function initDefaultPasswordProvider(): void
     {
+        Logging::logMessage("Initializing default PasswordProvider", "Security");
         PasswordProvider::initDefaultProvider($this->config->getDefaultPasswordProviderHashAlgorithm(), $this->config->getDefaultPasswordProviderHashOptions());
     }
 
     private function spoofServerHeader(): void
     {
         if ($this->config->isSpoofedServerHeadEnabled()) {
+            Logging::logMessage("Spoofing server header enabled, spoofing.", "Security");
             $this->response->addHeader('Server', $this->config->getSpoofedServerValue());
         }
     }
@@ -98,6 +107,7 @@ final class App
     private function initDatabaseConnection(): void
     {
         if ($this->config->isMariaDbEnabled()) {
+            Logging::logMessage("MariaDB connection enabled, connecting to: " . $this->config->getMariaDbHost(), "MariaDB");
             Connection::init($this->config->getMariaDbHost(), $this->config->getMariaDbUsername(), $this->config->getMariaDbPassword(), $this->config->getMariaDbDatabaseName());
         }
     }
@@ -107,11 +117,13 @@ final class App
      */
     public function run(): never
     {
+        Logging::logMessage("Application run invoked", "App");
         try {
             $this->runMiddleware();
             $matchedRoute = $this->router->matchRoute($this->request);
 
             if ($matchedRoute !== null) {
+                Logging::logMessage("Route matched: " . $matchedRoute->requestPathFormat, "App");
                 $this->request->setRoute($matchedRoute);
                 $this->response = $matchedRoute->execute($this->request, $this->response);
             } else {
@@ -120,7 +132,7 @@ final class App
 
             $this->response->send();
         } catch (Exception $e) {
-            $this->logger->log($this->request, $this->response, [], $e);
+            $this->logger->logException($this->request, $this->response, [], $e);
         }
     }
 
@@ -131,6 +143,7 @@ final class App
     private function runMiddleware(): void
     {
         foreach ($this->middleware as $middleware) {
+            Logging::logMessage("Running middleware: " . $middleware::class, "App");
             $this->response = $middleware->execute($this->request, $this->response, []);
 
             if ($this->response->getStatusCode() !== StatusCode::OK || $this->response->isLocationHeaderSent()) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.

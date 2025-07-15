@@ -17,22 +17,31 @@ class Logging implements ILoggingMiddleware
 {
     use ConstructorLoggingTrait;
 
-    public function log(Request $request, Response $response, array $args, Exception $e): never
+    public function logException(Request $request, Response $response, array $args, Exception $e): never
     {
         $loggingObject = new LoggingObject($request, $response, $args, $e, $this->config->getLoggingPath());
 
-        ($this->config->isProduction()) ? $this->logProd($loggingObject) : $this->logDev($loggingObject);
+        ($this->config->isProduction()) ? $this->logErrProd($loggingObject) : $this->logErrDev($loggingObject);
         die();
     }
 
-    private function logProd(LoggingObject $log): void
+    public static function logMessage(string $message, string $title = ""): void
+    {
+        $date = date('d/m/Y H:i:s');
+        $handle = fopen(self::$configStatic->getLoggingPath(), "a");
+        $message = ($title === "") ? "[Log] [$date] $message\n" : "[Log] [$title] [$date] $message\n";
+        fwrite($handle, $message);
+        fclose($handle);
+    }
+
+    private function logErrProd(LoggingObject $log): void
     {
         $handle = fopen($this->config->getLoggingPath(), "a");
         fwrite($handle, $log->request->url->path . ":" . $log->exception->getMessage() . "\n");
         fclose($handle);
     }
 
-    private function logDev(LoggingObject $log): void
+    private function logErrDev(LoggingObject $log): void
     {
         $handle = fopen($this->config->getLoggingPath(), "a");
         fwrite($handle, print_r($log, true));

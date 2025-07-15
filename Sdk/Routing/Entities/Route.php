@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Sdk\Routing\Entities;
 
+use Exception;
 use Sdk\App;
 use Sdk\Http\Entities\RequestMethod;
 use Sdk\Http\Entities\StatusCode;
@@ -170,7 +171,7 @@ final class Route
      * If the callback is not found {@see StatusCode NOT_IMPLEMENTED} response code is sent
      * @param Response $response Initial response after running {@see App} middleware
      * @return Response Response after running route middleware & callback
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(Request $request, Response $response): Response
     {
@@ -180,14 +181,14 @@ final class Route
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function runMiddleware(Request $request, Response $response, array $args): Response
     {
         foreach ($this->middleware as $middleware) {
             $response = $middleware->execute($request, $response, $args);
 
-            if ($response->getStatusCode() !== StatusCode::OK || $response->isLocationHeaderSent()) { //IF response status code is different from 200, we immediately send the response without any execution afterwards.
+            if ($response->getStatusCode() !== StatusCode::OK || $response->isLocationHeaderSent()) { //IF response status code is different from 200, we immediately send the response without any execution afterward.
                 $response->send();
             }
         }

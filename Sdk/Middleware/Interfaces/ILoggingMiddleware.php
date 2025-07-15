@@ -8,5 +8,6 @@ use Sdk\Http\Response;
 
 interface ILoggingMiddleware
 {
-    public function log(Request $request, Response $response, array $args, Exception $e): void;
+    public function logException(Request $request, Response $response, array $args, Exception $e): never;
+    public static function logMessage(string $message): void;
 }
