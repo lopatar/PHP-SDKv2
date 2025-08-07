@@ -10,6 +10,7 @@ use Sdk\Utils\Encryption\AES;
 
 interface IConfig
 {
+    public function getAppName(): string;
     /**
      * If false, we output {@see Exception::$message} thrown in {@see Route::execute()} to {@see Response::$text}
      * Recommended value is false
