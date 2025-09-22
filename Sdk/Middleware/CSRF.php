@@ -93,12 +93,13 @@ final class CSRF implements IMiddleware
     private function isValid(string|null $token): bool
     {
         $userTokenParts = explode('.', $token);
-        $hmacFromRequest = $userTokenParts[0];
-        $userRandom = $userTokenParts[1];
+        $hmacFromRequest = $userTokenParts[0]; //encoded in hex
+        $userRandom = $userTokenParts[1]; //encoded in hex
+        $userRandomStr = hex2bin($userRandom); //decoded hex
 
         $hmacSecret = self::$configStatic->getCsrfSecretKey();
         $sessionId = Session::id();
-        $userRawToken = strlen($sessionId) . "!$sessionId!" . strlen($userRandom) . '!' . $userRandom;
+        $userRawToken = strlen($sessionId) . "!$sessionId!" . strlen($userRandomStr) . '!' . $userRandom; //user random encoded in hex
 
         $expectedHmac = hash_hmac('sha3-256', $userRawToken, $hmacSecret);
         return hash_equals(bin2hex($expectedHmac), $hmacFromRequest); //check if bin2hex is necessary, cheatsheet only provided pseudocode.
