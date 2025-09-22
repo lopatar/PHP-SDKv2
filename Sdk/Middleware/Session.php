@@ -11,7 +11,7 @@ use Sdk\Middleware\Entities\ConstructorConfigTrait;
 use Sdk\Middleware\Interfaces\IMiddleware;
 
 #[Immutable]
-final  class Session implements IMiddleware
+final class Session implements IMiddleware
 {
     use ConstructorConfigTrait;
 
@@ -112,5 +112,10 @@ final  class Session implements IMiddleware
         }
 
         return $response;
+    }
+
+    public static function id(): string|false
+    {
+        return session_id();
     }
 }

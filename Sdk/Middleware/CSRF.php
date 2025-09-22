@@ -53,12 +53,19 @@ final class CSRF implements IMiddleware
         return $expires === null || time() > $expires;
     }
 
+    //https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
     private static function generateToken(): string
     {
-        $token = Random::stringSafe(48);
-        Session::set(SessionVariable::CSRF_TOKEN->value, $token);
-        Session::set(SessionVariable::CSRF_EXPIRES->value, time() + self::$configStatic->getCsrfTokenLifetime());
-        return $token;
+        $hmacSecret = self::$configStatic->getCsrfSecretKey();
+        $sessionId = Session::id();
+        $random = Random::stringSafe(64);
+        $rawToken = strlen($sessionId) . "!$sessionId!" . strlen($random) . '!' . bin2hex($random);
+
+        $hmac = hash_hmac('sha3-256', $rawToken, $hmacSecret);
+        $csrfToken = bin2hex($hmac) . '.' . bin2hex($random);
+
+        Session::set(SessionVariable::CSRF_TOKEN->value, $csrfToken);
+        return $csrfToken;
     }
 
     /**
@@ -88,6 +95,16 @@ final class CSRF implements IMiddleware
      */
     private function isValid(string|null $token): bool
     {
-        return self::getToken() === $token;
+        $userSuppliedToken = self::getToken();
+        $userTokenParts = explode('.', $userSuppliedToken);
+        $hmacFromRequest = $userTokenParts[0];
+        $userRandom = $userTokenParts[1];
+
+        $hmacSecret = self::$configStatic->getCsrfSecretKey();
+        $sessionId = Session::id();
+        $userRawToken = strlen($sessionId) . "!$sessionId!" . strlen($userRandom) . '!' . $userRandom;
+
+        $expectedHmac = hash_hmac('sha3-256', $userRawToken, $hmacSecret);
+        return hash_equals(bin2hex($expectedHmac), $hmacFromRequest);
     }
 }

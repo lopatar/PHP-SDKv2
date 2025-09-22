@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Sdk;
 
 use Sdk\Http\Entities\CookieSameSite;
+use Sdk\Middleware\CSRF;
 use Sdk\Middleware\Logging;
 use Sdk\Middleware\Session;
 use Sdk\Utils\Encryption\AES;
@@ -93,6 +94,12 @@ interface IConfig
      * @see Session
      */
     public function getSessionCookieSameSite(): CookieSameSite;
+
+    /**
+     * This is the CSRF secret key used for HMAC authentication, should be about 32-64 characters!
+     * @see CSRF
+     */
+    public function getCsrfSecretKey(): string;
 
     /**
      * CSRF protection configuration
