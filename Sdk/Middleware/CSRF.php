@@ -90,13 +90,9 @@ final class CSRF implements IMiddleware
         return $response;
     }
 
-    /**
-     * @throws SessionNotStarted
-     */
     private function isValid(string|null $token): bool
     {
-        $userSuppliedToken = self::getToken();
-        $userTokenParts = explode('.', $userSuppliedToken);
+        $userTokenParts = explode('.', $token);
         $hmacFromRequest = $userTokenParts[0];
         $userRandom = $userTokenParts[1];
 
@@ -105,6 +101,6 @@ final class CSRF implements IMiddleware
         $userRawToken = strlen($sessionId) . "!$sessionId!" . strlen($userRandom) . '!' . $userRandom;
 
         $expectedHmac = hash_hmac('sha3-256', $userRawToken, $hmacSecret);
-        return hash_equals(bin2hex($expectedHmac), $hmacFromRequest);
+        return hash_equals(bin2hex($expectedHmac), $hmacFromRequest); //check if bin2hex is necessary, cheatsheet only provided pseudocode.
     }
 }
