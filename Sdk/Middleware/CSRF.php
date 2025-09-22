@@ -32,9 +32,10 @@ final class CSRF implements IMiddleware
     }
 
     /**
+     * Gets the Csrf-Token, must be public because @see CSRF::getInputField() is for POST and raw token for Csrf-Token header.
      * @throws SessionNotStarted
      */
-    private static function getToken(): string
+    public static function getToken(): string
     {
         if (!Session::isStarted()) {
             throw new SessionNotStarted('\\Sdk\\Middleware\\CSRF');
@@ -69,7 +70,7 @@ final class CSRF implements IMiddleware
     }
 
     /**
-     * This function is responsible for validating the POSTed token
+     * This function is responsible for validating the POSTed token, or if request method isn´t POST it validates the Csrf-Token header.
      * @throws SessionNotStarted
      * @uses Session::isStarted(), Request::getPost(), CSRF::generateToken(), CSRF::isValid()
      */
@@ -90,8 +91,13 @@ final class CSRF implements IMiddleware
         return $response;
     }
 
+    //https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
     private function isValid(string|null $token): bool
     {
+        if ($token === null) {
+            return false;
+        }
+
         $userTokenParts = explode('.', $token);
         $hmacFromRequest = $userTokenParts[0]; //encoded in hex
         $userRandom = $userTokenParts[1]; //encoded in hex
@@ -102,6 +108,6 @@ final class CSRF implements IMiddleware
         $userRawToken = strlen($sessionId) . "!$sessionId!" . strlen($userRandomStr) . '!' . $userRandom; //user random encoded in hex
 
         $expectedHmac = hash_hmac('sha3-256', $userRawToken, $hmacSecret);
-        return hash_equals(bin2hex($expectedHmac), $hmacFromRequest); //check if bin2hex is necessary, cheatsheet only provided pseudocode.
+        return hash_equals(bin2hex($expectedHmac), $hmacFromRequest); //check if bin2hex() is necessary, cheatsheet only provided pseudocode.
     }
 }

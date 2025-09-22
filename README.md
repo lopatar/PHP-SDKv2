@@ -104,6 +104,7 @@ final class Config implements \Sdk\IConfig
       across requests
     - [CSRF](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/CSRF.php) middleware, used to protect against
       CSRF attacks
+      - Use CSRF::getInputField for HTML POST forms, or CSRF::getToken for sending requests with the header **Csrf-Token**
     - [HttpBasicAuth](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, used
       for basic HTTP auth, compares passwords hashed using [password_hash](https://www.php.net/password_hash)
     - [Redirect](https://github.com/lopatar/PHP-SDKv2/blob/main/Sdk/Middleware/HttpBasicAuth.php) middleware, useful for

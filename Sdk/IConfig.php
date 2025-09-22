@@ -97,6 +97,7 @@ interface IConfig
 
     /**
      * This is the CSRF secret key used for HMAC authentication, should be about 32-64 characters!
+     * !DO NOT SHARE THIS SECRET UNDER ANY CIRCUMSTANCES!
      * @see CSRF
      */
     public function getCsrfSecretKey(): string;
@@ -126,7 +127,7 @@ interface IConfig
      * Cookie encryption
      * Gets whether cookies should be automatically encrypted/decrypted
      * <h1><b>If enabled, no session middleware is needed to be added!</b></h1>
-     * @uses \Sdk\Utils\Encryption\AES, Session
+     * @uses AES, Session
      */
     public function isCookieEncryptionEnabled(): bool;
 
